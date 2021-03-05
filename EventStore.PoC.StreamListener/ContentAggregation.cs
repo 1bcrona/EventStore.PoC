@@ -4,25 +4,28 @@ using System.Text;
 using EventStore.PoC.Domain.Entity;
 using EventStore.PoC.Domain.Event.Impl;
 using Marten;
+using Marten.Events.Aggregation;
 using Marten.Events.Projections;
 
 namespace EventStore.PoC.StreamListener
 {
-    public class ContentAggregation : ViewProjection<Content, Guid>
+    public class ContentAggregation : AggregateProjection<Content>
     {
-        public object Id { get; }
         public ContentAggregation()
         {
-            ProjectEvent<ContentCreated>(Persist);
             DeleteEvent<ContentDeleted>();
+            Lifecycle = ProjectionLifecycle.Live;
+
         }
 
-        private void Persist(Content arg1, ContentCreated arg2)
+        public Content Create(ContentCreated contentCreated)
         {
-            arg1.ContentCdnLink = arg2.Data.ContentCdnLink;
-            arg1.ContentMetadata = arg2.Data.ContentMetadata;
-            arg1.PlayCount = arg2.Data.PlayCount;
-            arg1.SetId(arg2.AggregateId.ToString());
+            return new()
+            {
+                ContentCdnLink = contentCreated.Data.ContentCdnLink,
+                ContentMetadata = contentCreated.Data.ContentMetadata,
+                PlayCount = contentCreated.Data.PlayCount
+            };
         }
 
 

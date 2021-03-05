@@ -6,7 +6,6 @@ using EventStore.PoC.Domain.Entity;
 using EventStore.PoC.Store.EventStore.Impl.MartenDb;
 using EventStore.PoC.Store.EventStore.Infrastructure;
 using Marten;
-using Marten.Events.Projections.Async;
 using Microsoft.Extensions.Configuration;
 
 
@@ -31,20 +30,24 @@ namespace EventStore.PoC.StreamListener
             var eventStore = new MartenEventStore(_ConfigurationRoot.GetConnectionString("marten"));
 
 
-            eventStore.DocumentStore.Options.Events.InlineProjections.Add(new ContentAggregation());
+            eventStore.DocumentStore.Options.Events.Projections.Add(new ContentAggregation());
 
             using (var session = eventStore.DocumentStore.QuerySession())
             {
                 var contents = await session.Query<Content>().ToListAsync();
 
-
+                foreach (var content in contents)
+                {
+                    Console.WriteLine(content.Id);
+                }
             }
 
 
 
-            Console.ReadKey();
 
             Console.WriteLine("Hello World!");
+            Console.ReadKey();
+
         }
     }
 }
