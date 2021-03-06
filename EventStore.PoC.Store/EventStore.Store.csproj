@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EventStorePoC.Domain\EventStore.PoC.Domain.csproj" />
+    <ProjectReference Include="..\EventStorePoC.Domain\EventStore.Domain.csproj" />
   </ItemGroup>
 
 </Project>

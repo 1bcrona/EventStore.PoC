@@ -25,8 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EventStore.PoC.Store\EventStore.PoC.Store.csproj" />
-    <ProjectReference Include="..\EventStorePoC.Domain\EventStore.PoC.Domain.csproj" />
+    <ProjectReference Include="..\EventStore.PoC.Store\EventStore.Store.csproj" />
+    <ProjectReference Include="..\EventStorePoC.Domain\EventStore.Domain.csproj" />
   </ItemGroup>
 
 </Project>
