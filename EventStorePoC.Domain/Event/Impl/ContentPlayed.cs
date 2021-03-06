@@ -2,7 +2,7 @@
 
 namespace EventStore.PoC.Domain.Event.Impl
 {
-    public class ContentDeleted : Event<string>
+    public class ContentPlayed : Event<string>
     {
     }
 }

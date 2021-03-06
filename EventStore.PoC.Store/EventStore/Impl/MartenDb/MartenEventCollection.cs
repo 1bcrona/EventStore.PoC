@@ -1,8 +1,8 @@
-﻿using System;
+﻿using EventStore.PoC.Store.EventStore.Infrastructure;
+using Marten.Events;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using EventStore.PoC.Store.EventStore.Infrastructure;
-using Marten.Events;
 using IEvent = EventStore.PoC.Domain.Event.Infrastructure.IEvent;
 
 // ReSharper disable ConvertToUsingDeclaration
@@ -10,13 +10,22 @@ namespace EventStore.PoC.Store.EventStore.Impl.MartenDb
 {
     public class MartenEventCollection : IEventCollection
     {
+        #region Private Fields
+
         private readonly Marten.DocumentStore _DocumentStore;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public MartenEventCollection(Marten.DocumentStore documentStore)
         {
             _DocumentStore = documentStore;
         }
 
+        #endregion Public Constructors
+
+        #region Public Methods
 
         public async Task<object> AddEvent(IEvent @event)
         {
@@ -31,6 +40,12 @@ namespace EventStore.PoC.Store.EventStore.Impl.MartenDb
             return null;
         }
 
+        async Task<bool> IEventCollection.AddEvent(object streamId, IEvent @event)
+        {
+            var guidOrStringType = streamId.ToString();
+
+            return await AddEventInternal(guidOrStringType, @event);
+        }
 
         public async Task<object> AddEvents(IEvent[] events)
         {
@@ -43,15 +58,18 @@ namespace EventStore.PoC.Store.EventStore.Impl.MartenDb
             }
 
             return null;
+        }
 
+        public async Task<bool> AddEvents(object streamId, IEvent[] @event)
+        {
+            var guidOrStringType = streamId.ToString();
+            return await AddEventsInternal(guidOrStringType, @event);
         }
 
         public async Task<IEvent> ReadStream(Guid streamId)
         {
             return await ReadStreamInternal(streamId);
-
         }
-
 
         public async Task<IEvent> ReadStream(string streamId)
         {
@@ -62,7 +80,6 @@ namespace EventStore.PoC.Store.EventStore.Impl.MartenDb
         {
             using (var session = _DocumentStore.OpenSession())
             {
-
                 streamId ??= Guid.NewGuid();
 
                 if (_DocumentStore.Events.StreamIdentity == StreamIdentity.AsGuid)
@@ -74,28 +91,16 @@ namespace EventStore.PoC.Store.EventStore.Impl.MartenDb
                     return await session.Events.AggregateStreamAsync<IEvent>((string)streamId);
                 }
             }
-
         }
 
-        async Task<bool> IEventCollection.AddEvent(object streamId, IEvent @event)
-        {
-            var guidOrStringType = streamId.ToString();
+        #endregion Public Methods
 
-            return await AddEventInternal(guidOrStringType, @event);
-        }
-
-        public async Task<bool> AddEvents(object streamId, IEvent[] @event)
-        {
-            var guidOrStringType = streamId.ToString();
-            return await AddEventsInternal(guidOrStringType, @event);
-
-        }
+        #region Private Methods
 
         private async Task<bool> AddEventInternal(GuidOrStringType streamId, IEvent @event)
         {
             using (var session = _DocumentStore.OpenSession())
             {
-
                 streamId ??= Guid.NewGuid();
 
                 if (_DocumentStore.Events.StreamIdentity == StreamIdentity.AsGuid)
@@ -111,6 +116,7 @@ namespace EventStore.PoC.Store.EventStore.Impl.MartenDb
 
             return true;
         }
+
         private async Task<bool> AddEventsInternal(GuidOrStringType streamId, IEvent[] events)
         {
             using (var session = _DocumentStore.OpenSession())
@@ -132,5 +138,6 @@ namespace EventStore.PoC.Store.EventStore.Impl.MartenDb
             return true;
         }
 
+        #endregion Private Methods
     }
 }

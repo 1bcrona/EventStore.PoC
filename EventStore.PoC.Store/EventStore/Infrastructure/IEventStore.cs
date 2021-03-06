@@ -4,8 +4,12 @@ namespace EventStore.PoC.Store.EventStore.Infrastructure
 {
     public interface IEventStore
     {
-        Task<bool> Open();
+        #region Public Methods
 
         IEventCollection GetCollection();
+
+        Task<bool> Open();
+
+        #endregion Public Methods
     }
 }

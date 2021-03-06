@@ -1,10 +1,9 @@
-﻿using System;
-using EventStore.PoC.Domain.Entity.Infrastructure;
-
-namespace EventStore.PoC.Domain.Entity
+﻿namespace EventStore.PoC.Domain.ValueObject
 {
     public class ContentCdnLink
     {
+        #region Public Constructors
+
         public ContentCdnLink(string url)
         {
             Url = url;
@@ -14,7 +13,12 @@ namespace EventStore.PoC.Domain.Entity
         {
         }
 
+        #endregion Public Constructors
+
+        #region Public Properties
+
         public string Url { get; set; }
 
+        #endregion Public Properties
     }
 }

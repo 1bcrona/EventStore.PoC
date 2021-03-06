@@ -1,7 +1,5 @@
-﻿using EventStore.PoC.Domain.Entity;
-using EventStore.PoC.Domain.Event.Impl;
+﻿using EventStore.PoC.Domain.Event.Impl;
 using EventStore.PoC.Domain.Event.Infrastructure;
-using EventStore.PoC.Domain.ValueObject;
 using EventStore.PoC.Store.EventStore.Infrastructure;
 using MediatR;
 using System.Threading;
@@ -9,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventStore.PoC.API.Commands.Handlers
 {
-    public class AddContentCommandHandler : IRequestHandler<AddContentCommand, Content>
+    public class DeleteContentCommandHandler : IRequestHandler<DeleteContentCommand, bool>
     {
         #region Private Fields
 
@@ -19,7 +17,7 @@ namespace EventStore.PoC.API.Commands.Handlers
 
         #region Public Constructors
 
-        public AddContentCommandHandler(IEventStore documentStore)
+        public DeleteContentCommandHandler(IEventStore documentStore)
         {
             _DocumentStore = documentStore;
         }
@@ -28,27 +26,21 @@ namespace EventStore.PoC.API.Commands.Handlers
 
         #region Public Methods
 
-        public async Task<Content> Handle(AddContentCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(DeleteContentCommand request, CancellationToken cancellationToken)
         {
-            var c = new Content
-            {
-                ContentCdnLink = new ContentCdnLink(request.Url),
-                ContentMetadata = new ContentMetadata(request.Title)
-            };
-
             var eventCollection = _DocumentStore.GetCollection();
 
             var events = new IEvent[]
             {
-                new ContentCreated {AggregateId = c.Id, EntityId = c.Id, Data = c},
+                new ContentDeleted() { AggregateId = request.ContentId, EntityId = request.ContentId, Data = "Content Deleted"},
             };
 
             foreach (var @event in events)
             {
-                await eventCollection.AddEvent(c.Id, @event);
+                await eventCollection.AddEvent(request.ContentId, @event);
             }
 
-            return await Task.FromResult(c);
+            return await Task.FromResult(true);
         }
 
         #endregion Public Methods

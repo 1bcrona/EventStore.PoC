@@ -1,6 +1,6 @@
-﻿using System;
+﻿using EventStore.PoC.Domain.Entity.Infrastructure;
+using System;
 using System.Threading.Tasks;
-using EventStore.PoC.Domain.Entity.Infrastructure;
 
 namespace EventStore.PoC.Store.DocumentStore.Infrastructure
 {

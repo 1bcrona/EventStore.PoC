@@ -1,33 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using EventStore.PoC.Domain.Entity;
-using EventStore.PoC.Domain.Event.Impl;
-using Marten;
-using Marten.Events.Aggregation;
-using Marten.Events.Projections;
+﻿using EventStore.PoC.Domain.Event.Impl;
+using EventStore.PoC.Domain.ValueObject;
+using System;
 
 namespace EventStore.PoC.StreamListener
 {
-    public class ContentAggregation : AggregateProjection<Content>
+    public class ContentAggregation
     {
-        public ContentAggregation()
-        {
-            DeleteEvent<ContentDeleted>();
-            Lifecycle = ProjectionLifecycle.Live;
+        #region Public Properties
 
+        public Boolean Active { get; set; }
+        public ContentCdnLink ContentCdnLink { get; set; }
+        public ContentMetadata ContentMetadata { get; set; }
+        public Guid Id { get; set; }
+        public int PlayCount { get; set; }
+
+        #endregion Public Properties
+
+        #region Public Methods
+
+        public void Apply(ContentCreated e)
+        {
+            Id = Guid.Parse(e.EntityId.ToString() ?? Guid.Empty.ToString());
+            ContentMetadata = e.Data?.ContentMetadata;
+            ContentCdnLink = e.Data?.ContentCdnLink;
+            PlayCount = e.Data?.PlayCount ?? 0;
+            Active = true;
         }
 
-        public Content Create(ContentCreated contentCreated)
+        public void Apply(ContentDeleted e)
         {
-            return new()
-            {
-                ContentCdnLink = contentCreated.Data.ContentCdnLink,
-                ContentMetadata = contentCreated.Data.ContentMetadata,
-                PlayCount = contentCreated.Data.PlayCount
-            };
+            Active = false;
         }
 
+        public void Apply(ContentPlayed e)
+        {
+            PlayCount += 1;
+        }
 
+        #endregion Public Methods
     }
 }

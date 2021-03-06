@@ -1,11 +1,11 @@
-﻿using System;
-using System.Reflection;
-using System.Threading.Tasks;
-using EventStore.PoC.Domain.Entity.Infrastructure;
+﻿using EventStore.PoC.Domain.Entity.Infrastructure;
 using EventStore.PoC.Store.Attributes;
 using EventStore.PoC.Store.DocumentStore.Infrastructure;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using System;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace EventStore.PoC.Store.DocumentStore.Impl.Mongo
 {
@@ -17,11 +17,15 @@ namespace EventStore.PoC.Store.DocumentStore.Impl.Mongo
 
         #endregion Public Properties
 
+        #region Public Methods
+
         public void Dispose()
         {
             ReleaseUnmanagedResources();
             GC.SuppressFinalize(this);
         }
+
+        #endregion Public Methods
 
         #region Private Destructors
 
@@ -32,19 +36,22 @@ namespace EventStore.PoC.Store.DocumentStore.Impl.Mongo
 
         #endregion Private Destructors
 
+        #region Private Methods
+
         private void ReleaseUnmanagedResources()
         {
             _Client = null;
             _Database = null;
         }
 
+        #endregion Private Methods
+
         #region Private Fields
 
+        private static readonly string s_DefaultConnectionString = @"mongodb://localhost:27017/mongo";
         private readonly string _ConnectionString;
         private readonly string _DatabaseName;
         private MongoClient _Client;
-
-        private static readonly string s_DefaultConnectionString = @"mongodb://localhost:27017/mongo";
         private IMongoDatabase _Database;
 
         #endregion Private Fields

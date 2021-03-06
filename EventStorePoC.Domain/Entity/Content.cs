@@ -1,27 +1,39 @@
-﻿using System;
-using EventStore.PoC.Domain.Entity.Infrastructure;
+﻿using EventStore.PoC.Domain.Entity.Infrastructure;
+using EventStore.PoC.Domain.ValueObject;
+using System;
 
 namespace EventStore.PoC.Domain.Entity
 {
-    public class Content : BaseEntity<string>, IAggregateRoot
+    public class Content : BaseEntity<Guid>, IAggregateRoot
     {
-        public Content(string id)
+        #region Public Constructors
+
+        public Content(Guid id)
         {
             SetId(id);
         }
 
-        public Content() : this(null)
+        public Content() : this(Guid.NewGuid())
         {
         }
 
-        public ContentMetadata ContentMetadata { get; set; }
-        public ContentCdnLink ContentCdnLink { get; set; }
+        #endregion Public Constructors
 
+        #region Public Properties
+
+        public ContentCdnLink ContentCdnLink { get; set; }
+        public ContentMetadata ContentMetadata { get; set; }
         public int PlayCount { get; set; }
 
-        public override void SetId(string id)
+        #endregion Public Properties
+
+        #region Public Methods
+
+        public sealed override void SetId(Guid id)
         {
-            Id = id ?? Guid.NewGuid().ToString();
+            Id = id;
         }
+
+        #endregion Public Methods
     }
 }

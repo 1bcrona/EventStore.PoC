@@ -1,8 +1,5 @@
-using System.Reflection;
-using EventStore.PoC.API.Commands;
 using EventStore.PoC.Store.EventStore.Impl.MartenDb;
 using EventStore.PoC.Store.EventStore.Infrastructure;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -13,22 +10,22 @@ namespace EventStore.PoC.API
 {
     public class Startup
     {
+        #region Public Constructors
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        #endregion Public Constructors
+
+        #region Public Properties
+
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddMediatR(typeof(AddContentCommand).GetTypeInfo().Assembly);
-            services.AddSingleton<IEventStore, MartenEventStore>(_ =>
-                new MartenEventStore(Configuration.GetConnectionString("default")));
+        #endregion Public Properties
 
-            services.AddControllers();
-        }
+        #region Public Methods
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -43,5 +40,16 @@ namespace EventStore.PoC.API
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddScoped<IEventStore, MartenEventStore>(_ =>
+                new MartenEventStore(Configuration.GetConnectionString("default")));
+
+            services.AddControllers();
+        }
+
+        #endregion Public Methods
     }
 }

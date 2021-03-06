@@ -7,7 +7,7 @@ namespace EventStore.PoC.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ContentController : ControllerBase
+    public class PlayController : ControllerBase
     {
         #region Private Fields
 
@@ -17,7 +17,7 @@ namespace EventStore.PoC.API.Controllers
 
         #region Public Constructors
 
-        public ContentController(IMediator mediator)
+        public PlayController(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -26,14 +26,6 @@ namespace EventStore.PoC.API.Controllers
 
         #region Public Methods
 
-        [HttpDelete]
-        [Route("{contentId}")]
-        public async Task<IActionResult> Delete([FromRoute] DeleteContentCommand command)
-        {
-            var result = await _mediator.Send(command);
-            return Ok(result);
-        }
-
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -41,7 +33,8 @@ namespace EventStore.PoC.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] AddContentCommand command)
+        [Route("{contentId}")]
+        public async Task<IActionResult> Post([FromRoute] PlayContentCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);

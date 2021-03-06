@@ -1,13 +1,13 @@
-﻿using System;
+﻿using EventStore.PoC.Domain.Entity.Infrastructure;
+using EventStore.PoC.Store.DocumentStore.Infrastructure;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
-using EventStore.PoC.Domain.Entity.Infrastructure;
-using EventStore.PoC.Store.DocumentStore.Infrastructure;
-using MongoDB.Bson;
-using MongoDB.Driver;
 
 namespace EventStore.PoC.Store.DocumentStore.Impl.Mongo
 {
@@ -58,9 +58,9 @@ namespace EventStore.PoC.Store.DocumentStore.Impl.Mongo
 
             if (typeOfId?.PropertyType != typeof(string)) return false;
 
-            var objectId = (object) ObjectId.GenerateNewId();
+            var objectId = (object)ObjectId.GenerateNewId();
 
-            document.SetId((TKey) objectId);
+            document.SetId((TKey)objectId);
             return true;
         }
 

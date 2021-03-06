@@ -1,19 +1,16 @@
-﻿using System;
-using System.Diagnostics.Tracing;
-using System.Threading.Tasks;
-using Baseline.Dates;
-using EventStore.PoC.Domain.Entity;
+﻿using Baseline.Dates;
 using EventStore.PoC.Store.EventStore.Impl.MartenDb;
-using EventStore.PoC.Store.EventStore.Infrastructure;
 using Marten;
+using Marten.Events.Projections.Async;
 using Microsoft.Extensions.Configuration;
-
-
+using System;
+using System.Threading.Tasks;
 
 namespace EventStore.PoC.StreamListener
 {
-    class Program
+    internal class Program
     {
+        #region Private Properties
 
         private static IConfigurationRoot _ConfigurationRoot
         {
@@ -24,30 +21,42 @@ namespace EventStore.PoC.StreamListener
                 return builder.Build();
             }
         }
-        static async Task Main(string[] args)
+
+        #endregion Private Properties
+
+        #region Private Methods
+
+        private static async Task Main(string[] args)
         {
+            Marten.DocumentStore store = new MartenEventStore(_ConfigurationRoot.GetConnectionString("marten")).DocumentStore;
+            store.Events.AsyncProjections.AggregateStreamsWith<ContentAggregation>();
+            store.Events.ProjectView<ContentAggregation, Guid>();
 
-            var eventStore = new MartenEventStore(_ConfigurationRoot.GetConnectionString("marten"));
+            var theSession = store.LightweightSession();
 
-
-            eventStore.DocumentStore.Options.Events.Projections.Add(new ContentAggregation());
-
-            using (var session = eventStore.DocumentStore.QuerySession())
+            var settings = new DaemonSettings
             {
-                var contents = await session.Query<Content>().ToListAsync();
+                LeadingEdgeBuffer = 0.Seconds()
+            };
 
-                foreach (var content in contents)
-                {
-                    Console.WriteLine(content.Id);
-                }
+            using (var daemon = store.BuildProjectionDaemon(new[] { typeof(ContentAggregation) }, settings: settings))
+            {
+                await daemon.RebuildAll();
+                daemon.StartAll();
+                await daemon.WaitForNonStaleResults();
+                await daemon.StopAll();
             }
 
-
-
+            var contents = await theSession.Query<ContentAggregation>().ToListAsync();
+            foreach (var content in contents)
+            {
+                Console.WriteLine(content.Id);
+            }
 
             Console.WriteLine("Hello World!");
             Console.ReadKey();
-
         }
+
+        #endregion Private Methods
     }
 }
