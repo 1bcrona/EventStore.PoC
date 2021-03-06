@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStore.API", "EventStore.PoC.API\EventStore.API.csproj", "{A8E0AD18-518D-44E8-9579-165416E448A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStore.API", "EventStore.API\EventStore.API.csproj", "{A8E0AD18-518D-44E8-9579-165416E448A7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStore.Domain", "EventStorePoC.Domain\EventStore.Domain.csproj", "{2A98769A-F35E-49C3-B202-4179E42970DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStore.Domain", "EventStore.Domain\EventStore.Domain.csproj", "{2A98769A-F35E-49C3-B202-4179E42970DA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStore.Store", "EventStore.PoC.Store\EventStore.Store.csproj", "{122D08CF-4EDD-4C9D-8189-0458BD2AACBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStore.Store", "EventStore.Store\EventStore.Store.csproj", "{122D08CF-4EDD-4C9D-8189-0458BD2AACBB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStore.StreamListener", "EventStore.PoC.StreamListener\EventStore.StreamListener.csproj", "{16AA0E30-3F9E-4536-A384-42DD908EE3D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStore.StreamListener", "EventStore.StreamListener\EventStore.StreamListener.csproj", "{16AA0E30-3F9E-4536-A384-42DD908EE3D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
