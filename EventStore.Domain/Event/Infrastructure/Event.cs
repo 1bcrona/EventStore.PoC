@@ -1,13 +1,15 @@
-﻿namespace EventStore.Domain.Event.Infrastructure
+﻿using System;
+
+namespace EventStore.Domain.Event.Infrastructure
 {
     public abstract class Event<T> : IEvent where T : class
     {
         #region Public Properties
 
-        public object AggregateId { get; set; }
+        public Guid AggregateId { get; set; }
         public T Data { get; set; }
         object IEvent.Data => Data;
-        public object EntityId { get; set; }
+        public Guid EntityId { get; set; }
 
         #endregion Public Properties
     }

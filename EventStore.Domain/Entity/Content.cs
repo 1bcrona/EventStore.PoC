@@ -10,7 +10,7 @@ namespace EventStore.Domain.Entity
 
         public Content(Guid id)
         {
-            SetId(id);
+            this.Id = id;
         }
 
         public Content() : this(Guid.NewGuid())
@@ -29,10 +29,6 @@ namespace EventStore.Domain.Entity
 
         #region Public Methods
 
-        public sealed override void SetId(Guid id)
-        {
-            Id = id;
-        }
 
         #endregion Public Methods
     }

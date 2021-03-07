@@ -5,6 +5,10 @@ using Marten.Events.Projections.Async;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Threading.Tasks;
+using EventStore.Domain.Entity;
+using EventStore.Domain.Event.Impl;
+using EventStore.Domain.ValueObject;
+using Marten.Events.Projections;
 
 namespace EventStore.StreamListener
 {
@@ -29,9 +33,6 @@ namespace EventStore.StreamListener
         private static async Task Main(string[] args)
         {
             Marten.DocumentStore store = new MartenEventStore(_ConfigurationRoot.GetConnectionString("marten")).DocumentStore;
-            store.Events.AsyncProjections.AggregateStreamsWith<ContentAggregation>();
-            store.Events.ProjectView<ContentAggregation, Guid>();
-
             var theSession = store.LightweightSession();
 
             var settings = new DaemonSettings
@@ -39,7 +40,7 @@ namespace EventStore.StreamListener
                 LeadingEdgeBuffer = 0.Seconds()
             };
 
-            using (var daemon = store.BuildProjectionDaemon(new[] { typeof(ContentAggregation) }, settings: settings))
+            using (var daemon = store.BuildProjectionDaemon(new[] { typeof(ContentProjection) }, null, settings, new IProjection[] { new ContentProjection() }))
             {
                 await daemon.RebuildAll();
                 daemon.StartAll();
@@ -47,7 +48,8 @@ namespace EventStore.StreamListener
                 await daemon.StopAll();
             }
 
-            var contents = await theSession.Query<ContentAggregation>().ToListAsync();
+
+            var contents = await theSession.Query<Content>().ToListAsync();
             foreach (var content in contents)
             {
                 Console.WriteLine(content.Id);

@@ -60,7 +60,7 @@ namespace EventStore.Store.DocumentStore.Impl.Mongo
 
             var objectId = (object)ObjectId.GenerateNewId();
 
-            document.SetId((TKey)objectId);
+            document.Id = ((TKey)objectId);
             return true;
         }
 

@@ -1,5 +1,6 @@
 ﻿using EventStore.Domain.Event.Infrastructure;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace EventStore.Store.EventStore.Infrastructure
@@ -19,6 +20,9 @@ namespace EventStore.Store.EventStore.Infrastructure
         Task<IEvent> ReadStream(string streamId);
 
         Task<IEvent> ReadStream(Guid streamId);
+
+        Task<IEnumerable<T>> Query<T>();
+        Task<T> Query<T>(object id);
 
         #endregion Public Methods
     }

@@ -1,8 +1,11 @@
 ﻿using EventStore.Store.EventStore.Infrastructure;
+using Marten;
 using Marten.Events;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Remotion.Linq.Parsing;
 using IEvent = EventStore.Domain.Event.Infrastructure.IEvent;
 
 // ReSharper disable ConvertToUsingDeclaration
@@ -66,6 +69,60 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             return await AddEventsInternal(guidOrStringType, @event);
         }
 
+        public async Task<IEnumerable<T>> Query<T>()
+        {
+            return await QueryInternal<T>();
+        }
+
+        public async Task<T> Query<T>(object id)
+        {
+            switch (id)
+            {
+                case int:
+                    return await QueryInternal<T>(Convert.ToInt32(id));
+                case long:
+                    return await QueryInternal<T>(Convert.ToInt64(id));
+                case string:
+                    return await QueryInternal<T>(id.ToString());
+                case Guid:
+                    return await QueryInternal<T>(Guid.Parse(id.ToString() ?? string.Empty));
+                default:
+                    throw new Exception("NOT_A_VALID_ID");
+            }
+        }
+
+        private async Task<T> QueryInternal<T>(Guid id)
+        {
+            using (var session = _DocumentStore.LightweightSession())
+            {
+                return await session.LoadAsync<T>(id);
+            }
+        }
+
+        private async Task<T> QueryInternal<T>(string id)
+        {
+            using (var session = _DocumentStore.LightweightSession())
+            {
+                return await session.LoadAsync<T>(id);
+            }
+        }
+
+        private async Task<T> QueryInternal<T>(int id)
+        {
+            using (var session = _DocumentStore.LightweightSession())
+            {
+                return await session.LoadAsync<T>(id);
+            }
+        }
+
+        private async Task<T> QueryInternal<T>(long id)
+        {
+            using (var session = _DocumentStore.LightweightSession())
+            {
+                return await session.LoadAsync<T>(id);
+            }
+        }
+
         public async Task<IEvent> ReadStream(Guid streamId)
         {
             return await ReadStreamInternal(streamId);
@@ -76,9 +133,17 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             return await ReadStreamInternal(streamId);
         }
 
-        public async Task<IEvent> ReadStreamInternal(GuidOrStringType streamId)
+        private async Task<IEnumerable<T>> QueryInternal<T>()
         {
-            using (var session = _DocumentStore.OpenSession())
+            using (var session = _DocumentStore.LightweightSession())
+            {
+                return await session.Query<T>().ToListAsync();
+            }
+        }
+
+        private async Task<IEvent> ReadStreamInternal(GuidOrStringType streamId)
+        {
+            using (var session = _DocumentStore.LightweightSession())
             {
                 streamId ??= Guid.NewGuid();
 
@@ -99,7 +164,7 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
 
         private async Task<bool> AddEventInternal(GuidOrStringType streamId, IEvent @event)
         {
-            using (var session = _DocumentStore.OpenSession())
+            using (var session = _DocumentStore.LightweightSession())
             {
                 streamId ??= Guid.NewGuid();
 
@@ -119,7 +184,7 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
 
         private async Task<bool> AddEventsInternal(GuidOrStringType streamId, IEvent[] events)
         {
-            using (var session = _DocumentStore.OpenSession())
+            using (var session = _DocumentStore.LightweightSession())
             {
                 streamId ??= Guid.NewGuid();
 

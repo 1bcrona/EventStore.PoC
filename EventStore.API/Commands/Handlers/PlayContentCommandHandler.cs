@@ -32,7 +32,7 @@ namespace EventStore.API.Commands.Handlers
 
             var events = new IEvent[]
             {
-                new ContentPlayed() { AggregateId = request.ContentId, EntityId = request.ContentId, Data = "Content Played"},
+                new ContentPlayed { AggregateId = request.ContentId, EntityId = request.ContentId, Data = "Content Played"},
             };
 
             foreach (var @event in events)

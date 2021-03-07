@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using EventStore.API.Queries;
 
 namespace EventStore.API.Controllers
 {
@@ -39,6 +40,15 @@ namespace EventStore.API.Controllers
         {
             return await Task.FromResult(Ok("It works"));
         }
+
+        [HttpGet]
+        [Route("{contentId}")]
+        public async Task<IActionResult> Get([FromRoute] ContentDetailQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] AddContentCommand command)

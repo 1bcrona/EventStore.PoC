@@ -1,12 +1,14 @@
-﻿namespace EventStore.Domain.Event.Infrastructure
+﻿using System;
+
+namespace EventStore.Domain.Event.Infrastructure
 {
     public interface IEvent
     {
         #region Public Properties
 
-        public object AggregateId { get; }
+        public Guid AggregateId { get; }
         object Data { get; }
-        public object EntityId { get; }
+        public Guid EntityId { get; }
 
         #endregion Public Properties
     }
