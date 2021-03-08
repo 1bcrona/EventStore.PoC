@@ -1,7 +1,7 @@
-﻿using MediatR;
-using System;
+﻿using System;
+using MediatR;
 
-namespace EventStore.API.Commands
+namespace EventStore.API.Commands.Content
 {
     public class DeleteContentCommand : IRequest<bool>
     {

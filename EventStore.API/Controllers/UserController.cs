@@ -2,15 +2,15 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using EventStore.API.Commands.Content;
+using EventStore.API.Commands.User;
 using EventStore.API.Queries;
-using EventStore.API.Queries.Content;
+using EventStore.API.Queries.User;
 
 namespace EventStore.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ContentController : ControllerBase
+    public class UserController : ControllerBase
     {
         #region Private Fields
 
@@ -20,7 +20,7 @@ namespace EventStore.API.Controllers
 
         #region Public Constructors
 
-        public ContentController(IMediator mediator)
+        public UserController(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -30,8 +30,8 @@ namespace EventStore.API.Controllers
         #region Public Methods
 
         [HttpDelete]
-        [Route("{contentId}")]
-        public async Task<IActionResult> Delete([FromRoute] DeleteContentCommand command)
+        [Route("{userId}")]
+        public async Task<IActionResult> Delete([FromRoute] DeleteUserCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);
@@ -44,8 +44,8 @@ namespace EventStore.API.Controllers
         }
 
         [HttpGet]
-        [Route("{contentId}")]
-        public async Task<IActionResult> Get([FromRoute] ContentDetailQuery query)
+        [Route("{userId}")]
+        public async Task<IActionResult> Get([FromRoute] UserDetailQuery query)
         {
             var result = await _mediator.Send(query);
             return Ok(result);
@@ -53,7 +53,7 @@ namespace EventStore.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] AddContentCommand command)
+        public async Task<IActionResult> Post([FromBody] AddUserCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);

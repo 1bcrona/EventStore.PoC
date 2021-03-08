@@ -3,7 +3,7 @@ using EventStore.Domain.Event.Infrastructure;
 
 namespace EventStore.Domain.Event.Impl
 {
-    public class ContentPlayed : Event<PlayedContent>
+    public class ContentPlayDeleted : Event<PlayedContent>
     {
     }
 }

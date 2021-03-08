@@ -1,15 +1,14 @@
-﻿using EventStore.Domain.Entity;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using EventStore.Domain.Event.Impl;
 using EventStore.Domain.Event.Infrastructure;
 using EventStore.Domain.ValueObject;
 using EventStore.Store.EventStore.Infrastructure;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace EventStore.API.Commands.Handlers
+namespace EventStore.API.Commands.Content.Handler
 {
-    public class AddContentCommandHandler : IRequestHandler<AddContentCommand, Content>
+    public class AddContentCommandHandler : IRequestHandler<AddContentCommand, Domain.Entity.Content>
     {
         #region Private Fields
 
@@ -28,9 +27,9 @@ namespace EventStore.API.Commands.Handlers
 
         #region Public Methods
 
-        public async Task<Content> Handle(AddContentCommand request, CancellationToken cancellationToken)
+        public async Task<Domain.Entity.Content> Handle(AddContentCommand request, CancellationToken cancellationToken)
         {
-            var c = new Content
+            var c = new Domain.Entity.Content
             {
                 ContentCdnLink = new ContentCdnLink(request.Url),
                 ContentMetadata = new ContentMetadata(request.Title)

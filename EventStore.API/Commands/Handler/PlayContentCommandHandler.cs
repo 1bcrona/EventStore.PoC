@@ -1,11 +1,12 @@
-﻿using EventStore.Domain.Event.Impl;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using EventStore.Domain.Entity;
+using EventStore.Domain.Event.Impl;
 using EventStore.Domain.Event.Infrastructure;
 using EventStore.Store.EventStore.Infrastructure;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace EventStore.API.Commands.Handlers
+namespace EventStore.API.Commands.Handler
 {
     public class PlayContentCommandHandler : IRequestHandler<PlayContentCommand, bool>
     {
@@ -30,14 +31,23 @@ namespace EventStore.API.Commands.Handlers
         {
             var eventCollection = _DocumentStore.GetCollection();
 
+
+            PlayedContent playedContent = new PlayedContent();
+
+            var content = await eventCollection.Query<Domain.Entity.Content>(request.ContentId);
+            var user = await eventCollection.Query<Domain.Entity.User>(request.UserId);
+
+            playedContent.AssignContent(content);
+            playedContent.AssignUser(user);
+
             var events = new IEvent[]
             {
-                new ContentPlayed { AggregateId = request.ContentId, EntityId = request.ContentId, Data = "Content Played"},
+                new ContentPlayed { AggregateId = playedContent.Id, EntityId = playedContent.Id, Data = playedContent },
             };
 
             foreach (var @event in events)
             {
-                await eventCollection.AddEvent(request.ContentId, @event);
+                await eventCollection.AddEvent(playedContent.Id, @event);
             }
 
             return await Task.FromResult(true);

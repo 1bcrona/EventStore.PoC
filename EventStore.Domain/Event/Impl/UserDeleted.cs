@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using EventStore.Domain.Entity;
-using MediatR;
+using EventStore.Domain.Event.Infrastructure;
 
-namespace EventStore.API.Queries
+namespace EventStore.Domain.Event.Impl
 {
-    public class ContentDetailQuery : IRequest<Content>
+    public class UserDeleted : Event<string>
     {
-        public Guid ContentId { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using EventStore.API.Commands;
+﻿using System;
+using EventStore.API.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -34,8 +35,9 @@ namespace EventStore.API.Controllers
 
         [HttpPost]
         [Route("{contentId}")]
-        public async Task<IActionResult> Post([FromRoute] PlayContentCommand command)
+        public async Task<IActionResult> Post([FromRoute] Guid contentId, [FromBody] PlayContentCommand command)
         {
+            command.ContentId = contentId;
             var result = await _mediator.Send(command);
             return Ok(result);
         }

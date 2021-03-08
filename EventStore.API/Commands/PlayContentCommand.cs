@@ -8,6 +8,7 @@ namespace EventStore.API.Commands
         #region Public Properties
 
         public Guid ContentId { get; set; }
+        public Guid UserId { get; set; }
 
         #endregion Public Properties
     }

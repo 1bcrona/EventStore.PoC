@@ -1,9 +1,8 @@
-﻿using EventStore.Domain.Entity;
-using MediatR;
+﻿using MediatR;
 
-namespace EventStore.API.Commands
+namespace EventStore.API.Commands.Content
 {
-    public class AddContentCommand : IRequest<Content>
+    public class AddContentCommand : IRequest<Domain.Entity.Content>
     {
         #region Public Properties
 

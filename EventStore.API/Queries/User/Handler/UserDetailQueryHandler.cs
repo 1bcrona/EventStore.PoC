@@ -1,17 +1,15 @@
-﻿using EventStore.Domain.Entity;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using EventStore.Store.EventStore.Infrastructure;
 using MediatR;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace EventStore.API.Queries.Handlers
+namespace EventStore.API.Queries.User.Handler
 {
-    public class ContentDetailQueryHandler : IRequestHandler<ContentDetailQuery, Content>
+    public class UserDetailQueryHandler : IRequestHandler<UserDetailQuery, Domain.Entity.User>
     {
         #region Public Constructors
 
-        public ContentDetailQueryHandler(IEventStore documentStore)
+        public UserDetailQueryHandler(IEventStore documentStore)
         {
             _DocumentStore = documentStore;
         }
@@ -26,11 +24,11 @@ namespace EventStore.API.Queries.Handlers
 
         #region Public Methods
 
-        public async Task<Content> Handle(ContentDetailQuery request, CancellationToken cancellationToken)
+        public async Task<Domain.Entity.User> Handle(UserDetailQuery request, CancellationToken cancellationToken)
         {
             var collection = _DocumentStore.GetCollection();
 
-            var content = await collection.Query<Content>(request.ContentId);
+            var content = await collection.Query<Domain.Entity.User>(request.UserId);
 
             return content;
         }

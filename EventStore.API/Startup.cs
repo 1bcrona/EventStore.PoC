@@ -1,5 +1,4 @@
 using System.Reflection;
-using EventStore.API.Commands.Handlers;
 using EventStore.Store.EventStore.Impl.MartenDb;
 using EventStore.Store.EventStore.Infrastructure;
 using MediatR;
@@ -48,7 +47,7 @@ namespace EventStore.API
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddMediatR(Assembly.GetAssembly(typeof(AddContentCommandHandler)));
+            services.AddMediatR(Assembly.GetAssembly(this.GetType()));
             services.AddScoped<IEventStore, MartenEventStore>(_ =>
                 new MartenEventStore(Configuration.GetConnectionString("default")));
 

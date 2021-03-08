@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using EventStore.Domain.Entity;
 using EventStore.Domain.Event.Impl;
 using EventStore.Domain.ValueObject;
+using EventStore.StreamListener.Projection;
 using Marten.Events.Projections;
 
 namespace EventStore.StreamListener
@@ -40,20 +41,33 @@ namespace EventStore.StreamListener
                 LeadingEdgeBuffer = 0.Seconds()
             };
 
-            using (var daemon = store.BuildProjectionDaemon(new[] { typeof(ContentProjection) }, null, settings, new IProjection[] { new ContentProjection() }))
-            {
-                await daemon.RebuildAll();
-                daemon.StartAll();
-                await daemon.WaitForNonStaleResults();
-                await daemon.StopAll();
-            }
+            var daemon = store.BuildProjectionDaemon(
+                new[] { typeof(ContentProjection), typeof(UserProjection), typeof(PlayedContentProjection) }, null,
+                settings,
+                new IProjection[] { new PlayedContentProjection(), new ContentProjection(), new UserProjection(), });
+            daemon.StartAll();
+            await daemon.WaitForNonStaleResults();
+            //await daemon.StopAll();
+
 
 
             var contents = await theSession.Query<Content>().ToListAsync();
+
+            Console.WriteLine("Contents");
             foreach (var content in contents)
             {
                 Console.WriteLine(content.Id);
             }
+
+            Console.WriteLine("Users");
+
+
+            var users = await theSession.Query<User>().ToListAsync();
+            foreach (var user in users)
+            {
+                Console.WriteLine(user.Id);
+            }
+
 
             Console.WriteLine("Hello World!");
             Console.ReadKey();
