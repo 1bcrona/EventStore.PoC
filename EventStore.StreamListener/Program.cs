@@ -3,10 +3,10 @@ using EventStore.Domain.Entity;
 using EventStore.Store.EventStore.Impl.MartenDb;
 using EventStore.StreamListener.Projection;
 using Marten;
-using Marten.Events.Projections;
 using Marten.Events.Projections.Async;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace EventStore.StreamListener
@@ -31,7 +31,10 @@ namespace EventStore.StreamListener
 
         private static async Task Main(string[] args)
         {
-            Marten.DocumentStore store = new MartenEventStore(_ConfigurationRoot.GetConnectionString("marten")).DocumentStore;
+            var store = new MartenEventStore(_ConfigurationRoot.GetConnectionString("marten")).DocumentStore;
+            store.Events.InlineProjections.Add<ContentProjection>();
+            store.Events.InlineProjections.Add<PlayedContentProjection>();
+            store.Events.InlineProjections.Add<UserProjection>();
             var theSession = store.LightweightSession();
 
             var settings = new DaemonSettings
@@ -39,12 +42,12 @@ namespace EventStore.StreamListener
                 LeadingEdgeBuffer = 0.Seconds()
             };
 
-            var daemon = store.BuildProjectionDaemon(
-                new[] { typeof(ContentProjection), typeof(UserProjection), typeof(PlayedContentProjection) }, null,
-                settings,
-                new IProjection[] { new PlayedContentProjection(), new ContentProjection(), new UserProjection(), });
+
+            var daemon = store.BuildProjectionDaemon(settings: settings, projections: store.Events.InlineProjections.ToArray());
             daemon.StartAll();
             await daemon.WaitForNonStaleResults();
+
+            
 
             var contents = await theSession.Query<Content>().ToListAsync();
 

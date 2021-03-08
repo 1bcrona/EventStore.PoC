@@ -28,6 +28,7 @@ namespace EventStore.StreamListener.Projection
 
         #region Private Methods
 
+        
         private void Persist(Content view, ContentCreated e)
         {
             view.Id = e.EntityId;
@@ -35,6 +36,7 @@ namespace EventStore.StreamListener.Projection
             view.ContentCdnLink = e.Data?.ContentCdnLink;
             view.PlayCount = e.Data?.PlayCount ?? 0;
             view.Active = true;
+            
         }
 
         private void Persist(Content view, ContentDeleted @event)
