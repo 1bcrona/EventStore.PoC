@@ -17,12 +17,13 @@ namespace EventStore.Store.EventStore.Infrastructure
 
         Task<bool> AddEvents(object streamId, IEvent[] @event);
 
+        Task<IEnumerable<T>> Query<T>();
+
+        Task<T> Query<T>(object id);
+
         Task<IEvent> ReadStream(string streamId);
 
         Task<IEvent> ReadStream(Guid streamId);
-
-        Task<IEnumerable<T>> Query<T>();
-        Task<T> Query<T>(object id);
 
         #endregion Public Methods
     }

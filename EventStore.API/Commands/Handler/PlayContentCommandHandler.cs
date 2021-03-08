@@ -1,10 +1,10 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using EventStore.Domain.Entity;
+﻿using EventStore.Domain.Entity;
 using EventStore.Domain.Event.Impl;
 using EventStore.Domain.Event.Infrastructure;
 using EventStore.Store.EventStore.Infrastructure;
 using MediatR;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EventStore.API.Commands.Handler
 {
@@ -30,7 +30,6 @@ namespace EventStore.API.Commands.Handler
         public async Task<bool> Handle(PlayContentCommand request, CancellationToken cancellationToken)
         {
             var eventCollection = _DocumentStore.GetCollection();
-
 
             PlayedContent playedContent = new PlayedContent();
 

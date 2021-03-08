@@ -1,10 +1,8 @@
-﻿using EventStore.API.Commands;
+﻿using EventStore.API.Commands.Content;
+using EventStore.API.Queries.Content;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using EventStore.API.Commands.Content;
-using EventStore.API.Queries;
-using EventStore.API.Queries.Content;
 
 namespace EventStore.API.Controllers
 {
@@ -50,7 +48,6 @@ namespace EventStore.API.Controllers
             var result = await _mediator.Send(query);
             return Ok(result);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] AddContentCommand command)

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Remotion.Linq.Parsing;
 using IEvent = EventStore.Domain.Event.Infrastructure.IEvent;
 
 // ReSharper disable ConvertToUsingDeclaration
@@ -80,15 +79,29 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             {
                 case int:
                     return await QueryInternal<T>(Convert.ToInt32(id));
+
                 case long:
                     return await QueryInternal<T>(Convert.ToInt64(id));
+
                 case string:
                     return await QueryInternal<T>(id.ToString());
+
                 case Guid:
                     return await QueryInternal<T>(Guid.Parse(id.ToString() ?? string.Empty));
+
                 default:
                     throw new Exception("NOT_A_VALID_ID");
             }
+        }
+
+        public async Task<IEvent> ReadStream(Guid streamId)
+        {
+            return await ReadStreamInternal(streamId);
+        }
+
+        public async Task<IEvent> ReadStream(string streamId)
+        {
+            return await ReadStreamInternal(streamId);
         }
 
         private async Task<T> QueryInternal<T>(Guid id)
@@ -121,16 +134,6 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             {
                 return await session.LoadAsync<T>(id);
             }
-        }
-
-        public async Task<IEvent> ReadStream(Guid streamId)
-        {
-            return await ReadStreamInternal(streamId);
-        }
-
-        public async Task<IEvent> ReadStream(string streamId)
-        {
-            return await ReadStreamInternal(streamId);
         }
 
         private async Task<IEnumerable<T>> QueryInternal<T>()

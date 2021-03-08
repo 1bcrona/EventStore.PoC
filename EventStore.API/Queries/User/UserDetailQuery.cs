@@ -1,10 +1,14 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
+using System;
 
 namespace EventStore.API.Queries.User
 {
     public class UserDetailQuery : IRequest<Domain.Entity.User>
     {
+        #region Public Properties
+
         public Guid UserId { get; set; }
+
+        #endregion Public Properties
     }
 }

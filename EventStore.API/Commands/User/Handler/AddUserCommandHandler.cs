@@ -1,9 +1,9 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using EventStore.Domain.Event.Impl;
+﻿using EventStore.Domain.Event.Impl;
 using EventStore.Domain.Event.Infrastructure;
 using EventStore.Store.EventStore.Infrastructure;
 using MediatR;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EventStore.API.Commands.User.Handler
 {
@@ -29,7 +29,6 @@ namespace EventStore.API.Commands.User.Handler
         public async Task<Domain.Entity.User> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
             var u = new Domain.Entity.User { UserName = request.UserName };
-
 
             var eventCollection = _DocumentStore.GetCollection();
 

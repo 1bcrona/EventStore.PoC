@@ -26,10 +26,5 @@ namespace EventStore.Domain.Entity
         public int PlayCount { get; set; }
 
         #endregion Public Properties
-
-        #region Public Methods
-
-
-        #endregion Public Methods
     }
 }

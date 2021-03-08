@@ -6,7 +6,6 @@ using Marten.Schema;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace EventStore.StreamListener.Projection
 {
@@ -18,19 +17,18 @@ namespace EventStore.StreamListener.Projection
         {
             ProjectEvent<ContentPlayed>(created => created.EntityId, Persist);
 
-            Func<IDocumentSession, UserDeleted, List<Guid>> deletedContents =
-                (ds, @event) =>
-                {
-                    var allPlayedContents = ds.Query<PlayedContent>();
+            List<Guid> ContentsWillBeDeleted(IDocumentSession ds, UserDeleted @event)
+            {
+                var allPlayedContents = ds.Query<PlayedContent>();
 
-                    var contents = allPlayedContents
-                        .Where(a => a.ViewedUser.Id == @event.EntityId)
-                        .Select(a => a.Id).ToList();
-                    return contents;
-                };
+                var contents = allPlayedContents.Where(a => a.ViewedUser.Id == @event.EntityId)
+                    .Select(a => a.Id)
+                    .ToList();
+                return contents;
+            }
 
-            DeleteEvent<UserDeleted>(deletedContents);
-            DeleteEvent<ContentPlayDeleted>(@event => @event.EntityId);
+            ProjectEvent<UserDeleted>(ContentsWillBeDeleted, Persist);
+            ProjectEvent<ContentPlayDeleted>(@event => @event.EntityId, Persist);
         }
 
         private void Persist
@@ -57,9 +55,12 @@ namespace EventStore.StreamListener.Projection
 
         #region Private Methods
 
-       
-
         private void Persist(PlayedContent view, UserDeleted e)
+        {
+            view.Active = false;
+        }
+
+        private void Persist(PlayedContent view, ContentPlayDeleted e)
         {
             view.Active = false;
         }

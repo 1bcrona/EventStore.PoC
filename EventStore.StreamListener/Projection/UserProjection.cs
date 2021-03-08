@@ -14,7 +14,6 @@ namespace EventStore.StreamListener.Projection
         {
             ProjectEvent<UserDeleted>(@event => @event.EntityId, Persist);
             ProjectEvent<UserCreated>(created => created.EntityId, Persist);
-            //ProjectEvent<ContentPlayed>(@event => @event.EntityId, Persist);
         }
 
         #endregion Public Constructors

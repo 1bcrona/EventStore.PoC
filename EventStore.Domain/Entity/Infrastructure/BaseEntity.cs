@@ -7,14 +7,8 @@ namespace EventStore.Domain.Entity.Infrastructure
         #region Public Properties
 
         public Boolean Active { get; set; }
-        public T Id { get;  set; }
+        public T Id { get; set; }
 
         #endregion Public Properties
-
-        #region Public Methods
-
-  
-
-        #endregion Public Methods
     }
 }

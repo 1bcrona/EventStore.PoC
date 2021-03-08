@@ -1,15 +1,13 @@
 ﻿using Baseline.Dates;
+using EventStore.Domain.Entity;
 using EventStore.Store.EventStore.Impl.MartenDb;
+using EventStore.StreamListener.Projection;
 using Marten;
+using Marten.Events.Projections;
 using Marten.Events.Projections.Async;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Threading.Tasks;
-using EventStore.Domain.Entity;
-using EventStore.Domain.Event.Impl;
-using EventStore.Domain.ValueObject;
-using EventStore.StreamListener.Projection;
-using Marten.Events.Projections;
 
 namespace EventStore.StreamListener
 {
@@ -47,9 +45,6 @@ namespace EventStore.StreamListener
                 new IProjection[] { new PlayedContentProjection(), new ContentProjection(), new UserProjection(), });
             daemon.StartAll();
             await daemon.WaitForNonStaleResults();
-            //await daemon.StopAll();
-
-
 
             var contents = await theSession.Query<Content>().ToListAsync();
 
@@ -61,13 +56,11 @@ namespace EventStore.StreamListener
 
             Console.WriteLine("Users");
 
-
             var users = await theSession.Query<User>().ToListAsync();
             foreach (var user in users)
             {
                 Console.WriteLine(user.Id);
             }
-
 
             Console.WriteLine("Hello World!");
             Console.ReadKey();

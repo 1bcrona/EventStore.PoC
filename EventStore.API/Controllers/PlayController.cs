@@ -1,7 +1,7 @@
-﻿using System;
-using EventStore.API.Commands;
+﻿using EventStore.API.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace EventStore.API.Controllers

@@ -11,14 +11,14 @@ namespace EventStore.Domain.ValueObject
             Url = url;
         }
 
+        public ContentCdnLink() : this(null)
+        {
+        }
+
         private bool ValidateCdnLink(string url)
         {
             var normalizedUrl = (url ?? String.Empty).Trim();
             return !String.IsNullOrEmpty(normalizedUrl);
-        }
-
-        public ContentCdnLink() : this(null)
-        {
         }
 
         #endregion Public Constructors

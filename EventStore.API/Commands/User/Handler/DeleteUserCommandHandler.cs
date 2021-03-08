@@ -1,12 +1,9 @@
-﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using EventStore.Domain.Entity;
-using EventStore.Domain.Event.Impl;
+﻿using EventStore.Domain.Event.Impl;
 using EventStore.Domain.Event.Infrastructure;
 using EventStore.Store.EventStore.Infrastructure;
-using Marten.Linq.SoftDeletes;
 using MediatR;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EventStore.API.Commands.User.Handler
 {
@@ -42,18 +39,6 @@ namespace EventStore.API.Commands.User.Handler
             {
                 await eventCollection.AddEvent(request.UserId, @event);
             }
-
-            //var playedContents = await eventCollection.Query<PlayedContent>();
-
-            //var contents = playedContents.Where(w => w.ViewedUser.Id == request.UserId).ToList();
-
-
-            //contents.ForEach(async (c) =>
-            //{
-            //    await eventCollection.AddEvent(c.Id,
-            //        new ContentPlayDeleted() { AggregateId = c.Id, Data = c, EntityId = c.Id });
-            //});
-
 
             return await Task.FromResult(true);
         }
