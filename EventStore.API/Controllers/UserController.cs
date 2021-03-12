@@ -1,8 +1,8 @@
-﻿using EventStore.API.Commands.User;
+﻿using System.Threading.Tasks;
+using EventStore.API.Commands.User;
 using EventStore.API.Queries.User;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace EventStore.API.Controllers
 {

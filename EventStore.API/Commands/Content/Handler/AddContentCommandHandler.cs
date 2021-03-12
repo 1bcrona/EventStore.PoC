@@ -1,10 +1,10 @@
-﻿using EventStore.Domain.Event.Impl;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using EventStore.Domain.Event.Impl;
 using EventStore.Domain.Event.Infrastructure;
 using EventStore.Domain.ValueObject;
 using EventStore.Store.EventStore.Infrastructure;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace EventStore.API.Commands.Content.Handler
 {
@@ -35,17 +35,14 @@ namespace EventStore.API.Commands.Content.Handler
                 ContentMetadata = new ContentMetadata(request.Title)
             };
 
-            var eventCollection = _DocumentStore.GetCollection();
+            var eventCollection = await _DocumentStore.GetCollection();
 
             var events = new IEvent[]
             {
-                new ContentCreated {AggregateId = c.Id, EntityId = c.Id, Data = c},
+                new ContentCreated {AggregateId = c.Id, EntityId = c.Id, Data = c}
             };
 
-            foreach (var @event in events)
-            {
-                await eventCollection.AddEvent(c.Id, @event);
-            }
+            foreach (var @event in events) await eventCollection.AddEvent(c.Id, @event);
 
             return await Task.FromResult(c);
         }

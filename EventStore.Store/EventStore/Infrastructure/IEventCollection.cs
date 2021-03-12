@@ -1,7 +1,7 @@
-﻿using EventStore.Domain.Event.Infrastructure;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EventStore.Domain.Event.Infrastructure;
 
 namespace EventStore.Store.EventStore.Infrastructure
 {

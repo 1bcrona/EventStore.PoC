@@ -1,15 +1,21 @@
-﻿using EventStore.Domain.Entity.Infrastructure;
-using System;
+﻿using System;
+using EventStore.Domain.Entity.Infrastructure;
 
 namespace EventStore.Domain.Entity
 {
     public class User : BaseEntity<Guid>
     {
+        #region Public Properties
+
+        public string UserName { get; set; }
+
+        #endregion Public Properties
+
         #region Public Constructors
 
         public User(Guid id)
         {
-            this.Id = id;
+            Id = id;
         }
 
         public User() : this(Guid.NewGuid())
@@ -17,11 +23,5 @@ namespace EventStore.Domain.Entity
         }
 
         #endregion Public Constructors
-
-        #region Public Properties
-
-        public string UserName { get; set; }
-
-        #endregion Public Properties
     }
 }

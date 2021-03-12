@@ -1,15 +1,18 @@
-﻿using EventStore.Store.EventStore.Infrastructure;
-using Marten;
-using Marten.Storage;
+﻿using System;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using EventStore.Store.EventStore.Infrastructure;
+using Marten;
+using Marten.Events.Projections;
+using Marten.Events.Projections.Async;
+using Marten.Storage;
 
 namespace EventStore.Store.EventStore.Impl.MartenDb
 {
     public class MartenEventStore : IEventStore
     {
         #region Private Fields
-
-        private readonly Marten.DocumentStore _DocumentStore;
 
         #endregion Private Fields
 
@@ -26,19 +29,23 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             });
         }
 
+        private readonly SemaphoreSlim _DaemonLock = new(1, 1);
+
+        private IDaemon _Daemon;
+
         #endregion Public Constructors
 
         #region Public Properties
 
-        public Marten.DocumentStore DocumentStore => _DocumentStore;
+        private Marten.DocumentStore _DocumentStore { get; }
 
         #endregion Public Properties
 
         #region Public Methods
 
-        public IEventCollection GetCollection()
+        public async Task<IEventCollection> GetCollection()
         {
-            return new MartenEventCollection(_DocumentStore);
+            return await Task.FromResult(new MartenEventCollection(_DocumentStore));
         }
 
         public async Task<bool> Open()
@@ -46,6 +53,68 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             return await Task.FromResult(true);
         }
 
+        public async Task AddProjection(IEventProjection eventProjection)
+        {
+            if (!(eventProjection is IProjection martenProjection)) throw new Exception("NOT_A_VALID_PROJECTION");
+
+            _DocumentStore.Events.InlineProjections.Add(martenProjection);
+            await Task.CompletedTask;
+        }
+
+        public async Task StartProjectionDaemon()
+        {
+
+            await _DaemonLock.WaitAsync();
+
+            try
+            {
+                if (_Daemon != null)
+                {
+                    var current = Interlocked.Exchange(ref _Daemon, null);
+                    await current.StopAll();
+                    current.Dispose();
+                }
+
+                _Daemon = _DocumentStore.BuildProjectionDaemon(
+                    projections: _DocumentStore.Events.InlineProjections.ToArray());
+                _Daemon.StartAll();
+                await _Daemon.WaitForNonStaleResults();
+            }
+            finally
+            {
+
+                _DaemonLock.Release();
+            }
+        }
+
+
+
+
         #endregion Public Methods
+
+        private void ReleaseUnmanagedResources()
+        {
+            // TODO release unmanaged resources here
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            ReleaseUnmanagedResources();
+            if (!disposing) return;
+            _DaemonLock?.Dispose();
+            _Daemon?.Dispose();
+            _DocumentStore?.Dispose();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~MartenEventStore()
+        {
+            Dispose(false);
+        }
     }
 }

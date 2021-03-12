@@ -1,13 +1,16 @@
-﻿using Baseline.Dates;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Baseline.Dates;
 using EventStore.Domain.Entity;
 using EventStore.Store.EventStore.Impl.MartenDb;
+using EventStore.Store.EventStore.Infrastructure;
 using EventStore.StreamListener.Projection;
+using EventStore.StreamListener.Projection.Marten;
 using Marten;
 using Marten.Events.Projections.Async;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EventStore.StreamListener
 {
@@ -29,43 +32,27 @@ namespace EventStore.StreamListener
 
         #region Private Methods
 
+        private static IServiceCollection InitializeContainer()
+        {
+            IServiceCollection services = new ServiceCollection();
+            services.AddScoped<IEventStore, MartenEventStore>(_ =>
+                new MartenEventStore(_ConfigurationRoot.GetConnectionString("default")));
+            services.AddSingleton<App>();
+
+            return services;
+        }
+
+
         private static async Task Main(string[] args)
         {
-            var store = new MartenEventStore(_ConfigurationRoot.GetConnectionString("marten")).DocumentStore;
-            store.Events.InlineProjections.Add<ContentProjection>();
-            store.Events.InlineProjections.Add<PlayedContentProjection>();
-            store.Events.InlineProjections.Add<UserProjection>();
-            var theSession = store.LightweightSession();
 
-            var settings = new DaemonSettings
-            {
-                LeadingEdgeBuffer = 0.Seconds()
-            };
+            var serviceCollection = InitializeContainer();
 
+            var serviceProvider = serviceCollection.BuildServiceProvider();
 
-            var daemon = store.BuildProjectionDaemon(settings: settings, projections: store.Events.InlineProjections.ToArray());
-            daemon.StartAll();
-            await daemon.WaitForNonStaleResults();
+            // calls the Run method in App, which is replacing Main
+            await serviceProvider.GetService<App>().Run();
 
-            
-
-            var contents = await theSession.Query<Content>().ToListAsync();
-
-            Console.WriteLine("Contents");
-            foreach (var content in contents)
-            {
-                Console.WriteLine(content.Id);
-            }
-
-            Console.WriteLine("Users");
-
-            var users = await theSession.Query<User>().ToListAsync();
-            foreach (var user in users)
-            {
-                Console.WriteLine(user.Id);
-            }
-
-            Console.WriteLine("Hello World!");
             Console.ReadKey();
         }
 

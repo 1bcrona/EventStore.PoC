@@ -1,17 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Marten" Version="3.13.3" />
-    <PackageReference Include="MongoDB.Driver" Version="2.12.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Marten" Version="3.13.3" />
+		<PackageReference Include="MongoDB.Driver" Version="2.12.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\EventStore.Domain\EventStore.Domain.csproj" />
-    <ProjectReference Include="..\EventStore.Domain\EventStore.Domain.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\EventStore.Domain\EventStore.Domain.csproj" />
+		<ProjectReference Include="..\EventStore.Domain\EventStore.Domain.csproj" />
+	</ItemGroup>
 
 </Project>

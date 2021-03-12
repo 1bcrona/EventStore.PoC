@@ -1,5 +1,5 @@
-﻿using EventStore.Domain.Entity.Infrastructure;
-using System;
+﻿using System;
+using EventStore.Domain.Entity.Infrastructure;
 
 namespace EventStore.Domain.Entity
 {
@@ -9,7 +9,7 @@ namespace EventStore.Domain.Entity
 
         public PlayedContent(Guid id)
         {
-            this.Id = id;
+            Id = id;
         }
 
         public PlayedContent() : this(Guid.NewGuid())
@@ -20,7 +20,7 @@ namespace EventStore.Domain.Entity
 
         #region Public Properties
 
-        public Content ViewContent { get; set; }
+        public Content ViewedContent { get; set; }
         public User ViewedUser { get; set; }
 
         #endregion Public Properties
@@ -29,7 +29,7 @@ namespace EventStore.Domain.Entity
 
         public void AssignContent(Content c)
         {
-            ViewContent = c;
+            ViewedContent = c;
         }
 
         public void AssignUser(User u)

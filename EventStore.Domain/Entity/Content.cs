@@ -1,6 +1,6 @@
-﻿using EventStore.Domain.Entity.Infrastructure;
+﻿using System;
+using EventStore.Domain.Entity.Infrastructure;
 using EventStore.Domain.ValueObject;
-using System;
 
 namespace EventStore.Domain.Entity
 {
@@ -10,7 +10,7 @@ namespace EventStore.Domain.Entity
 
         public Content(Guid id)
         {
-            this.Id = id;
+            Id = id;
         }
 
         public Content() : this(Guid.NewGuid())

@@ -1,14 +1,20 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace EventStore.Store.EventStore.Infrastructure
 {
-    public interface IEventStore
+    public interface IEventStore : IDisposable
     {
         #region Public Methods
 
-        IEventCollection GetCollection();
+        Task<IEventCollection> GetCollection();
 
         Task<bool> Open();
+
+        Task AddProjection(IEventProjection eventProjection);
+
+
+        Task StartProjectionDaemon();
 
         #endregion Public Methods
     }

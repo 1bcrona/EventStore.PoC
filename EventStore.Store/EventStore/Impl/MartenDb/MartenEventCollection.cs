@@ -1,10 +1,10 @@
-﻿using EventStore.Store.EventStore.Infrastructure;
-using Marten;
-using Marten.Events;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EventStore.Store.EventStore.Infrastructure;
+using Marten;
+using Marten.Events;
 using IEvent = EventStore.Domain.Event.Infrastructure.IEvent;
 
 // ReSharper disable ConvertToUsingDeclaration
@@ -34,10 +34,7 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             var aggregateId = Guid.NewGuid();
             var result = await AddEventInternal(aggregateId, @event);
 
-            if (result)
-            {
-                return aggregateId;
-            }
+            if (result) return aggregateId;
 
             return null;
         }
@@ -54,10 +51,7 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             var aggregateId = Guid.NewGuid();
             var result = await AddEventsInternal(aggregateId, events);
 
-            if (result)
-            {
-                return aggregateId;
-            }
+            if (result) return aggregateId;
 
             return null;
         }
@@ -151,13 +145,8 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
                 streamId ??= Guid.NewGuid();
 
                 if (_DocumentStore.Events.StreamIdentity == StreamIdentity.AsGuid)
-                {
-                    return await session.Events.AggregateStreamAsync<IEvent>((Guid)streamId);
-                }
-                else
-                {
-                    return await session.Events.AggregateStreamAsync<IEvent>((string)streamId);
-                }
+                    return await session.Events.AggregateStreamAsync<IEvent>((Guid) streamId);
+                return await session.Events.AggregateStreamAsync<IEvent>((string) streamId);
             }
         }
 
@@ -172,13 +161,9 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
                 streamId ??= Guid.NewGuid();
 
                 if (_DocumentStore.Events.StreamIdentity == StreamIdentity.AsGuid)
-                {
-                    session.Events.Append((Guid)streamId, @event);
-                }
+                    session.Events.Append((Guid) streamId, @event);
                 else
-                {
-                    session.Events.Append((string)streamId, @event);
-                }
+                    session.Events.Append((string) streamId, @event);
                 await session.SaveChangesAsync();
             }
 
@@ -192,13 +177,9 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
                 streamId ??= Guid.NewGuid();
 
                 if (_DocumentStore.Events.StreamIdentity == StreamIdentity.AsGuid)
-                {
-                    session.Events.Append((Guid)streamId, events?.Cast<object>());
-                }
+                    session.Events.Append((Guid) streamId, events?.Cast<object>());
                 else
-                {
-                    session.Events.Append((string)streamId, events?.Cast<object>());
-                }
+                    session.Events.Append((string) streamId, events?.Cast<object>());
 
                 await session.SaveChangesAsync();
             }

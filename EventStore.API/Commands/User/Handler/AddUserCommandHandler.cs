@@ -1,9 +1,9 @@
-﻿using EventStore.Domain.Event.Impl;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using EventStore.Domain.Event.Impl;
 using EventStore.Domain.Event.Infrastructure;
 using EventStore.Store.EventStore.Infrastructure;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace EventStore.API.Commands.User.Handler
 {
@@ -30,17 +30,14 @@ namespace EventStore.API.Commands.User.Handler
         {
             var u = new Domain.Entity.User { UserName = request.UserName };
 
-            var eventCollection = _DocumentStore.GetCollection();
+            var eventCollection = await _DocumentStore.GetCollection();
 
             var events = new IEvent[]
             {
-                new UserCreated() {AggregateId = u.Id, EntityId = u.Id, Data = u},
+                new UserCreated {AggregateId = u.Id, EntityId = u.Id, Data = u}
             };
 
-            foreach (var @event in events)
-            {
-                await eventCollection.AddEvent(u.Id, @event);
-            }
+            foreach (var @event in events) await eventCollection.AddEvent(u.Id, @event);
 
             return await Task.FromResult(u);
         }

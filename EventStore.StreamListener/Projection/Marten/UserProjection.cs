@@ -1,12 +1,13 @@
-﻿using EventStore.Domain.Entity;
+﻿using System;
+using EventStore.Domain.Entity;
 using EventStore.Domain.Event.Impl;
+using EventStore.Store.EventStore.Infrastructure;
 using Marten.Events.Projections;
 using Marten.Schema;
-using System;
 
-namespace EventStore.StreamListener.Projection
+namespace EventStore.StreamListener.Projection.Marten
 {
-    public class UserProjection : ViewProjection<User, Guid>
+    public class UserProjection : ViewProjection<User, Guid>, IEventProjection
     {
         #region Public Constructors
 
@@ -20,8 +21,7 @@ namespace EventStore.StreamListener.Projection
 
         #region Public Properties
 
-        [Identity]
-        public Guid Id { get; set; }
+        [Identity] public Guid Id { get; set; }
 
         #endregion Public Properties
 
@@ -40,5 +40,7 @@ namespace EventStore.StreamListener.Projection
         }
 
         #endregion Private Methods
+
+        public event EventHandler<object> ProjectionUpdated;
     }
 }

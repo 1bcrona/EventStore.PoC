@@ -6,22 +6,20 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
     {
         #region Private Fields
 
-        private readonly string _Value;
-
         #endregion Private Fields
 
         #region Public Constructors
 
         public GuidOrStringType(string value)
         {
-            _Value = value;
+            Value = value;
         }
 
         #endregion Public Constructors
 
         #region Public Properties
 
-        public string Value => _Value;
+        public string Value { get; }
 
         #endregion Public Properties
 
@@ -34,12 +32,12 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
 
         public static implicit operator GuidOrStringType(string val)
         {
-            return new GuidOrStringType(val);
+            return new(val);
         }
 
         public static implicit operator GuidOrStringType(Guid val)
         {
-            return new GuidOrStringType(val.ToString());
+            return new(val.ToString());
         }
 
         public static implicit operator string(GuidOrStringType m)

@@ -1,16 +1,23 @@
-﻿using EventStore.Domain.Entity;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using EventStore.Domain.Entity;
 using EventStore.Domain.Event.Impl;
+using EventStore.Store.EventStore.Infrastructure;
 using Marten;
 using Marten.Events.Projections;
 using Marten.Schema;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace EventStore.StreamListener.Projection
+namespace EventStore.StreamListener.Projection.Marten
 {
-    public class PlayedContentProjection : ViewProjection<PlayedContent, Guid>
+    public class PlayedContentProjection : ViewProjection<PlayedContent, Guid>, IEventProjection
     {
+        #region Public Properties
+
+        [Identity] public Guid Id { get; set; }
+
+        #endregion Public Properties
+
         #region Public Constructors
 
         public PlayedContentProjection()
@@ -40,18 +47,11 @@ namespace EventStore.StreamListener.Projection
         {
             view.Id = e.EntityId;
             view.AssignUser(e.Data?.ViewedUser);
-            view.AssignContent(e.Data?.ViewContent);
+            view.AssignContent(e.Data?.ViewedContent);
             view.Active = true;
         }
 
         #endregion Public Constructors
-
-        #region Public Properties
-
-        [Identity]
-        public Guid Id { get; set; }
-
-        #endregion Public Properties
 
         #region Private Methods
 
@@ -66,5 +66,7 @@ namespace EventStore.StreamListener.Projection
         }
 
         #endregion Private Methods
+
+        public event EventHandler<object> ProjectionUpdated;
     }
 }

@@ -1,9 +1,9 @@
-﻿using EventStore.Domain.Event.Impl;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using EventStore.Domain.Event.Impl;
 using EventStore.Domain.Event.Infrastructure;
 using EventStore.Store.EventStore.Infrastructure;
 using MediatR;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace EventStore.API.Commands.Content.Handler
 {
@@ -28,17 +28,15 @@ namespace EventStore.API.Commands.Content.Handler
 
         public async Task<bool> Handle(DeleteContentCommand request, CancellationToken cancellationToken)
         {
-            var eventCollection = _DocumentStore.GetCollection();
+            var eventCollection = await _DocumentStore.GetCollection();
 
             var events = new IEvent[]
             {
-                new ContentDeleted() { AggregateId = request.ContentId, EntityId = request.ContentId, Data = "Content Deleted"},
+                new ContentDeleted
+                    {AggregateId = request.ContentId, EntityId = request.ContentId, Data = "Content Deleted"}
             };
 
-            foreach (var @event in events)
-            {
-                await eventCollection.AddEvent(request.ContentId, @event);
-            }
+            foreach (var @event in events) await eventCollection.AddEvent(request.ContentId, @event);
 
             return await Task.FromResult(true);
         }
