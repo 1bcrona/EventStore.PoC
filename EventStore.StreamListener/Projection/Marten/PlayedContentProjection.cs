@@ -1,16 +1,15 @@
-﻿using System;
+﻿using EventStore.Domain.Entity;
+using EventStore.Domain.Event.Impl;
+using EventStore.StreamListener.Projection.Marten.Infrastructure;
+using Marten;
+using Marten.Schema;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using EventStore.Domain.Entity;
-using EventStore.Domain.Event.Impl;
-using EventStore.Store.EventStore.Infrastructure;
-using Marten;
-using Marten.Events.Projections;
-using Marten.Schema;
 
 namespace EventStore.StreamListener.Projection.Marten
 {
-    public class PlayedContentProjection : ViewProjection<PlayedContent, Guid>, IEventProjection
+    public class PlayedContentProjection : BaseMartenProjection<PlayedContent, Guid>
     {
         #region Public Properties
 
@@ -22,8 +21,6 @@ namespace EventStore.StreamListener.Projection.Marten
 
         public PlayedContentProjection()
         {
-            ProjectEvent<ContentPlayed>(created => created.EntityId, Persist);
-
             List<Guid> ContentsWillBeDeleted(IDocumentSession ds, UserDeleted @event)
             {
                 var allPlayedContents = ds.Query<PlayedContent>();
@@ -35,20 +32,6 @@ namespace EventStore.StreamListener.Projection.Marten
             }
 
             ProjectEvent<UserDeleted>(ContentsWillBeDeleted, Persist);
-            ProjectEvent<ContentPlayDeleted>(@event => @event.EntityId, Persist);
-        }
-
-        private void Persist
-        (
-            IDocumentSession documentSession,
-            PlayedContent view,
-            ContentPlayed e
-        )
-        {
-            view.Id = e.EntityId;
-            view.AssignUser(e.Data?.ViewedUser);
-            view.AssignContent(e.Data?.ViewedContent);
-            view.Active = true;
         }
 
         #endregion Public Constructors
@@ -60,13 +43,6 @@ namespace EventStore.StreamListener.Projection.Marten
             view.Active = false;
         }
 
-        private void Persist(PlayedContent view, ContentPlayDeleted e)
-        {
-            view.Active = false;
-        }
-
         #endregion Private Methods
-
-        public event EventHandler<object> ProjectionUpdated;
     }
 }

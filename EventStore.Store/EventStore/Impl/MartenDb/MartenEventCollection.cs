@@ -1,10 +1,10 @@
-﻿using System;
+﻿using EventStore.Store.EventStore.Infrastructure;
+using Marten;
+using Marten.Events;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EventStore.Store.EventStore.Infrastructure;
-using Marten;
-using Marten.Events;
 using IEvent = EventStore.Domain.Event.Infrastructure.IEvent;
 
 // ReSharper disable ConvertToUsingDeclaration
@@ -145,8 +145,8 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
                 streamId ??= Guid.NewGuid();
 
                 if (_DocumentStore.Events.StreamIdentity == StreamIdentity.AsGuid)
-                    return await session.Events.AggregateStreamAsync<IEvent>((Guid) streamId);
-                return await session.Events.AggregateStreamAsync<IEvent>((string) streamId);
+                    return await session.Events.AggregateStreamAsync<IEvent>((Guid)streamId);
+                return await session.Events.AggregateStreamAsync<IEvent>((string)streamId);
             }
         }
 
@@ -161,9 +161,9 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
                 streamId ??= Guid.NewGuid();
 
                 if (_DocumentStore.Events.StreamIdentity == StreamIdentity.AsGuid)
-                    session.Events.Append((Guid) streamId, @event);
+                    session.Events.Append((Guid)streamId, @event);
                 else
-                    session.Events.Append((string) streamId, @event);
+                    session.Events.Append((string)streamId, @event);
                 await session.SaveChangesAsync();
             }
 
@@ -177,9 +177,9 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
                 streamId ??= Guid.NewGuid();
 
                 if (_DocumentStore.Events.StreamIdentity == StreamIdentity.AsGuid)
-                    session.Events.Append((Guid) streamId, events?.Cast<object>());
+                    session.Events.Append((Guid)streamId, events?.Cast<object>());
                 else
-                    session.Events.Append((string) streamId, events?.Cast<object>());
+                    session.Events.Append((string)streamId, events?.Cast<object>());
 
                 await session.SaveChangesAsync();
             }

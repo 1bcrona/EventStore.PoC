@@ -1,7 +1,7 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using EventStore.Store.EventStore.Infrastructure;
+﻿using EventStore.Store.EventStore.Infrastructure;
 using MediatR;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EventStore.API.Queries.Content.Handler
 {

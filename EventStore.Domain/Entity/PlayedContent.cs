@@ -1,5 +1,5 @@
-﻿using System;
-using EventStore.Domain.Entity.Infrastructure;
+﻿using EventStore.Domain.Entity.Infrastructure;
+using System;
 
 namespace EventStore.Domain.Entity
 {

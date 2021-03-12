@@ -1,11 +1,11 @@
-﻿using System;
-using System.Reflection;
-using System.Threading.Tasks;
-using EventStore.Domain.Entity.Infrastructure;
+﻿using EventStore.Domain.Entity.Infrastructure;
 using EventStore.Store.Attributes;
 using EventStore.Store.DocumentStore.Infrastructure;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
+using System;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace EventStore.Store.DocumentStore.Impl.Mongo
 {

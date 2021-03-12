@@ -7,12 +7,11 @@ namespace EventStore.Store.EventStore.Infrastructure
     {
         #region Public Methods
 
+        Task AddProjection(IEventProjection eventProjection);
+
         Task<IEventCollection> GetCollection();
 
         Task<bool> Open();
-
-        Task AddProjection(IEventProjection eventProjection);
-
 
         Task StartProjectionDaemon();
 

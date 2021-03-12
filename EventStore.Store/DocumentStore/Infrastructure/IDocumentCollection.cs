@@ -1,8 +1,8 @@
-﻿using System;
+﻿using EventStore.Domain.Entity.Infrastructure;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using EventStore.Domain.Entity.Infrastructure;
 
 namespace EventStore.Store.DocumentStore.Infrastructure
 {

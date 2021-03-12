@@ -4,10 +4,6 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
 {
     public class GuidOrStringType
     {
-        #region Private Fields
-
-        #endregion Private Fields
-
         #region Public Constructors
 
         public GuidOrStringType(string value)

@@ -1,22 +1,22 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using EventStore.Store.EventStore.Infrastructure;
+﻿using EventStore.Store.EventStore.Infrastructure;
 using Marten;
 using Marten.Events.Projections;
 using Marten.Events.Projections.Async;
 using Marten.Storage;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EventStore.Store.EventStore.Impl.MartenDb
 {
     public class MartenEventStore : IEventStore
     {
-        #region Private Fields
-
-        #endregion Private Fields
-
         #region Public Constructors
+
+        private readonly SemaphoreSlim _DaemonLock = new(1, 1);
+
+        private IDaemon _Daemon;
 
         public MartenEventStore(string connectionString)
         {
@@ -29,10 +29,6 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             });
         }
 
-        private readonly SemaphoreSlim _DaemonLock = new(1, 1);
-
-        private IDaemon _Daemon;
-
         #endregion Public Constructors
 
         #region Public Properties
@@ -42,6 +38,14 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
         #endregion Public Properties
 
         #region Public Methods
+
+        public async Task AddProjection(IEventProjection eventProjection)
+        {
+            if (!(eventProjection is IProjection martenProjection)) throw new Exception("NOT_A_VALID_PROJECTION");
+
+            _DocumentStore.Events.InlineProjections.Add(martenProjection);
+            await Task.CompletedTask;
+        }
 
         public async Task<IEventCollection> GetCollection()
         {
@@ -53,17 +57,8 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             return await Task.FromResult(true);
         }
 
-        public async Task AddProjection(IEventProjection eventProjection)
-        {
-            if (!(eventProjection is IProjection martenProjection)) throw new Exception("NOT_A_VALID_PROJECTION");
-
-            _DocumentStore.Events.InlineProjections.Add(martenProjection);
-            await Task.CompletedTask;
-        }
-
         public async Task StartProjectionDaemon()
         {
-
             await _DaemonLock.WaitAsync();
 
             try
@@ -82,19 +77,25 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             }
             finally
             {
-
                 _DaemonLock.Release();
             }
         }
 
-
-
-
         #endregion Public Methods
 
-        private void ReleaseUnmanagedResources()
+        #region Private Destructors
+
+        ~MartenEventStore()
         {
-            // TODO release unmanaged resources here
+            Dispose(false);
+        }
+
+        #endregion Private Destructors
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -106,15 +107,9 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             _DocumentStore?.Dispose();
         }
 
-        public void Dispose()
+        private void ReleaseUnmanagedResources()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        ~MartenEventStore()
-        {
-            Dispose(false);
+            // TODO release unmanaged resources here
         }
     }
 }

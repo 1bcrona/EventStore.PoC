@@ -1,6 +1,6 @@
-﻿using System;
-using EventStore.Domain.Entity.Infrastructure;
+﻿using EventStore.Domain.Entity.Infrastructure;
 using EventStore.Domain.ValueObject;
+using System;
 
 namespace EventStore.Domain.Entity
 {
