@@ -25,14 +25,14 @@ namespace EventStore.StreamListener.Projection.Marten.Infrastructure
 
         #region Public Methods
 
-        public void AddEvent<TEvent>(Func<TEvent, TKey> idSelector, Action<T, TEvent> action) where TEvent : class, IEvent
+        public void AddEvent<TEvent>(Func<TEvent, TKey> keySelector, Action<T, TEvent> action) where TEvent : class, IEvent
         {
-            ProjectEvent(idSelector, action);
+            ProjectEvent(keySelector, action);
         }
 
-        public void AddEvent<TEvent>(Func<TEvent, List<TKey>> idSelector, Action<T, TEvent> action) where TEvent : class, IEvent
+        public void AddEvent<TEvent>(Func<TEvent, List<TKey>> keySelector, Action<T, TEvent> action) where TEvent : class, IEvent
         {
-            ProjectEvent(idSelector, action);
+            ProjectEvent(keySelector, action);
         }
 
         #endregion Public Methods

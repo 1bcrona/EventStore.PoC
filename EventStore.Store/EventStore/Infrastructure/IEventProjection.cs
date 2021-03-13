@@ -17,9 +17,9 @@ namespace EventStore.Store.EventStore.Infrastructure
     {
         #region Public Methods
 
-        void AddEvent<TEvent>(Func<TEvent, TKey> idSelector, Action<T, TEvent> action) where TEvent : class, IEvent;
+        void AddEvent<TEvent>(Func<TEvent, TKey> keySelector, Action<T, TEvent> action) where TEvent : class, IEvent;
 
-        void AddEvent<TEvent>(Func<TEvent, List<TKey>> idSelector, Action<T, TEvent> action) where TEvent : class, IEvent;
+        void AddEvent<TEvent>(Func<TEvent, List<TKey>> keySelector, Action<T, TEvent> action) where TEvent : class, IEvent;
 
         #endregion Public Methods
     }

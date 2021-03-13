@@ -38,7 +38,7 @@ namespace EventStore.StreamListener
                 user.Active = true;
             });
 
-            userProjection.AddEvent<UserDeleted>(@event => @event.EntityId, (user, e) =>
+            userProjection.AddEvent<UserDeleted>(@event => @event.EntityId, (user, _) =>
             {
                 user.Active = false;
             });
@@ -54,12 +54,12 @@ namespace EventStore.StreamListener
                 content.Active = true;
             });
 
-            contentProjection.AddEvent<ContentDeleted>(@event => @event.EntityId, (content, e) =>
+            contentProjection.AddEvent<ContentDeleted>(@event => @event.EntityId, (content, _) =>
             {
                 content.Active = false;
             });
 
-            contentProjection.AddEvent<ContentPlayed>(@event => @event.Data.ViewedContent.Id, (content, e) =>
+            contentProjection.AddEvent<ContentPlayed>(@event => @event.Data.ViewedContent.Id, (content, _) =>
             {
                 content.PlayCount++;
             });
@@ -74,7 +74,7 @@ namespace EventStore.StreamListener
                playedContent.Active = true;
            });
 
-            playedContentProjection.AddEvent<ContentPlayDeleted>(@event => @event.EntityId, (playedContent, e) =>
+            playedContentProjection.AddEvent<ContentPlayDeleted>(@event => @event.EntityId, (playedContent, _) =>
             {
                 playedContent.Active = false;
             });
@@ -95,6 +95,12 @@ namespace EventStore.StreamListener
 
             var users = await collection.Query<User>();
             foreach (var user in users) Console.WriteLine(user.Id);
+
+
+
+            Console.WriteLine("Played Contents");
+            var playedContents = await collection.Query<PlayedContent>();
+            foreach (var playedContent in playedContents) Console.WriteLine(playedContent.Id);
         }
 
         #endregion Public Methods

@@ -1,9 +1,16 @@
-﻿using EventStore.Store.EventStore.Impl.MartenDb;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Baseline.Dates;
+using EventStore.Domain.Entity;
+using EventStore.Store.EventStore.Impl.MartenDb;
 using EventStore.Store.EventStore.Infrastructure;
+using EventStore.StreamListener.Projection;
+using EventStore.StreamListener.Projection.Marten;
+using Marten;
+using Marten.Events.Projections.Async;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Threading.Tasks;
 
 namespace EventStore.StreamListener
 {
@@ -35,13 +42,15 @@ namespace EventStore.StreamListener
             return services;
         }
 
-        private static async Task Main(string[] args)
+
+        private static void Main(string[] args)
         {
+
             var serviceCollection = InitializeContainer();
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
 
-            await serviceProvider?.GetService<App>()?.Run();
+            serviceProvider?.GetService<App>()?.Run();
 
             Console.ReadKey();
         }
