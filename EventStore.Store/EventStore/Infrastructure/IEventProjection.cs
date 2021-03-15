@@ -1,6 +1,7 @@
 ﻿using EventStore.Domain.Event.Infrastructure;
 using System;
 using System.Collections.Generic;
+using EventStore.Domain.Entity.Infrastructure;
 
 namespace EventStore.Store.EventStore.Infrastructure
 {
@@ -13,7 +14,7 @@ namespace EventStore.Store.EventStore.Infrastructure
         #endregion Public Events
     }
 
-    public interface IEventProjection<out T, TKey> : IEventProjection
+    public interface IEventProjection<out T, TKey> : IEventProjection where T : BaseEntity<TKey>
     {
         #region Public Methods
 
