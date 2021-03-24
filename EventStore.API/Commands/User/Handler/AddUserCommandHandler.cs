@@ -28,7 +28,7 @@ namespace EventStore.API.Commands.User.Handler
 
         public async Task<Domain.Entity.User> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
-            var u = new Domain.Entity.User { UserName = request.UserName };
+            var u = new Domain.Entity.User(request.UserName);
 
             var eventCollection = await _DocumentStore.GetCollection();
 

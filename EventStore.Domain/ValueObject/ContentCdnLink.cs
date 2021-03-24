@@ -1,4 +1,7 @@
-﻿namespace EventStore.Domain.ValueObject
+﻿using System;
+using System.Runtime.CompilerServices;
+
+namespace EventStore.Domain.ValueObject
 {
     public class ContentCdnLink
     {
@@ -12,10 +15,12 @@
 
         public ContentCdnLink(string url)
         {
+            ValidateCdnLink(url);
             Url = url;
         }
 
-        public ContentCdnLink() : this(null)
+
+        public ContentCdnLink() : this(String.Empty)
         {
         }
 

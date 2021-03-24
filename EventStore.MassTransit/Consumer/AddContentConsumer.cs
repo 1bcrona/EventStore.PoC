@@ -1,0 +1,50 @@
+﻿using EventStore.Domain.Entity;
+using EventStore.Domain.Event.Impl;
+using EventStore.Domain.Event.Infrastructure;
+using EventStore.Domain.ValueObject;
+using EventStore.Store.EventStore.Infrastructure;
+using MassTransit;
+using System.Threading.Tasks;
+
+namespace EventStore.MassTransit
+{
+    public class AddContentCommandConsumer : IConsumer<AddContentCommand>
+    {
+        private readonly IEventStore _DocumentStore;
+
+        public AddContentCommandConsumer()
+        {
+
+        }
+        public AddContentCommandConsumer(IEventStore documentStore)
+        {
+            _DocumentStore = documentStore;
+        }
+
+        public async Task Consume(ConsumeContext<AddContentCommand> context)
+        {
+            var c = new Content
+            {
+                ContentCdnLink = new ContentCdnLink(context.Message.Url),
+                ContentMetadata = new ContentMetadata(context.Message.Title)
+            };
+
+            var eventCollection = await _DocumentStore.GetCollection();
+
+            var events = new IEvent[]
+            {
+                new ContentCreated {AggregateId = c.Id, EntityId = c.Id, Data = c}
+            };
+
+            foreach (var @event in events) await eventCollection.AddEvent(c.Id, @event);
+
+            await context.RespondAsync(c);
+        }
+    }
+
+    public class AddContentCommand
+    {
+        public string Title { get; set; }
+        public string Url { get; set; }
+    }
+}

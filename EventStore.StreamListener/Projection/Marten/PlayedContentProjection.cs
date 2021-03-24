@@ -2,7 +2,6 @@
 using EventStore.Domain.Event.Impl;
 using EventStore.StreamListener.Projection.Marten.Infrastructure;
 using Marten;
-using Marten.Schema;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +10,6 @@ namespace EventStore.StreamListener.Projection.Marten
 {
     public class PlayedContentProjection : BaseMartenProjection<PlayedContent, Guid>
     {
-        #region Public Properties
-
-        [Identity] public Guid Id { get; set; }
-
-        #endregion Public Properties
-
         #region Public Constructors
 
         public PlayedContentProjection()
