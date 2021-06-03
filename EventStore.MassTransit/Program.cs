@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using MassTransit;
+using MassTransit.Internals.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EventStore.MassTransit
@@ -11,6 +12,9 @@ namespace EventStore.MassTransit
 
         static async Task Main(string[] args)
         {
+
+            Console.WriteLine("Starting MassTransit.");
+
             var services = new ServiceCollection();
 
             services.AddMassTransit();
@@ -20,9 +24,18 @@ namespace EventStore.MassTransit
 
             await busControl.StartAsync();
 
+            //await busControl.Send(new AddContentCommand() { Title = "Mass", Url = "Transit" });
+            var x = await busControl.GetSendEndpoint(new Uri("queue:add-content-command"));
+            await busControl.Send(new AddContentCommand() { Title = "Mass", Url = "Transit" });
+            await x.Send(new AddContentCommand() { Title = "Mass", Url = "Transit" });
+
+
+            Console.WriteLine("Started. Press any key to exit");
             Console.ReadKey();
 
             await busControl.StopAsync();
+
+
 
         }
     }

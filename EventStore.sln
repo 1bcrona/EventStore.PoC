@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStore.Store", "EventSt
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStore.StreamListener", "EventStore.StreamListener\EventStore.StreamListener.csproj", "{16AA0E30-3F9E-4536-A384-42DD908EE3D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore.MassTransit", "EventStore.MassTransit\EventStore.MassTransit.csproj", "{AE830AD3-D791-4464-AD84-57B89C4E0D72}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStore.API.MassTransit", "EventStore.API.MassTransit\EventStore.API.MassTransit.csproj", "{B2E95C60-D5A6-4CC2-AE30-716527768CFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{16AA0E30-3F9E-4536-A384-42DD908EE3D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16AA0E30-3F9E-4536-A384-42DD908EE3D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16AA0E30-3F9E-4536-A384-42DD908EE3D8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AE830AD3-D791-4464-AD84-57B89C4E0D72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AE830AD3-D791-4464-AD84-57B89C4E0D72}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AE830AD3-D791-4464-AD84-57B89C4E0D72}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AE830AD3-D791-4464-AD84-57B89C4E0D72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2E95C60-D5A6-4CC2-AE30-716527768CFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2E95C60-D5A6-4CC2-AE30-716527768CFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2E95C60-D5A6-4CC2-AE30-716527768CFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2E95C60-D5A6-4CC2-AE30-716527768CFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

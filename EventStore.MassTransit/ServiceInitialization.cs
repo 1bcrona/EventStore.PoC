@@ -16,18 +16,16 @@ namespace EventStore.MassTransit
             services.AddScoped<IEventStore, MartenEventStore>(_ => new MartenEventStore("User ID=postgres;Password=password;Host=localhost;Port=5432;Database=postgres;"));
             services.AddMassTransit(config =>
             {
-                config.AddConsumers(Assembly.GetExecutingAssembly());
 
+                config.AddConsumers(Assembly.GetExecutingAssembly());
+                config.SetKebabCaseEndpointNameFormatter();
                 var consumerTypes = Assembly.GetExecutingAssembly().GetTypes().Where(w => !w.IsInterface && typeof(IConsumer).IsAssignableFrom(w));
                 
-                // Adding all Request Clients
                 foreach (var type in consumerTypes)
                 {
                     config.AddRequestClient(type);
                 }
 
-
-                config.SetKebabCaseEndpointNameFormatter();
                 config.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.ConfigureEndpoints(context);
@@ -38,6 +36,8 @@ namespace EventStore.MassTransit
                     });
 
                 });
+
+
             });
 
 
