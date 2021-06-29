@@ -1,12 +1,12 @@
-﻿using System.Linq;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using EventStore.API.Model;
+﻿using EventStore.API.Model;
 using EventStore.API.Model.Validation;
 using EventStore.Domain.Event.Impl;
 using EventStore.Store.EventStore.Infrastructure;
 using MediatR;
+using System.Linq;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EventStore.API.Commands.Customer.Handler
 {

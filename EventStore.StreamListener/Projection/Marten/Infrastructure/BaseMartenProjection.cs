@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using EventStore.Domain.Entity.Infrastructure;
+﻿using EventStore.Domain.Entity.Infrastructure;
 using EventStore.Domain.Event.Infrastructure;
 using EventStore.Store.EventStore.Infrastructure;
 using Marten.Events.Projections;
 using Marten.Schema;
+using System;
+using System.Collections.Generic;
 
 namespace EventStore.StreamListener.Projection.Marten.Infrastructure
 {
     public class BaseMartenProjection<T, TKey> : ViewProjection<T, TKey>, IEventProjection<T, TKey> where T : BaseEntity<TKey>
     {
-        #region Public Events
-
-
-        #endregion Public Events
-
         #region Public Properties
 
         [Identity]

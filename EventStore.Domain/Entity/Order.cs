@@ -1,10 +1,10 @@
 ﻿using EventStore.Domain.Entity.Infrastructure;
-using System;
 using EventStore.Domain.ValueObject;
+using System;
 
 namespace EventStore.Domain.Entity
 {
-    public class Order : BaseEntity<Guid>, IAggregateRoot
+    public class Order : BaseEntity<Guid>
     {
         #region Public Constructors
 
@@ -21,26 +21,23 @@ namespace EventStore.Domain.Entity
 
         #region Public Properties
 
-        public Product OrderProduct { get; set; }
-        public Customer OrderCustomer { get; set; }
-        public int Quantity { get; set; }
-
         public Price Amount { get; set; }
+        public Guid OrderCustomerId { get; set; }
+        public Guid OrderProductId { get; set; }
+        public int Quantity { get; set; }
 
         #endregion Public Properties
 
         #region Public Methods
 
-
-
-        public void AssignProduct(Product p)
+        public void AssignCustomerId(Guid c)
         {
-            OrderProduct = p;
+            OrderCustomerId = c;
         }
 
-        public void AssignCustomer(Customer c)
+        public void AssignProductId(Guid p)
         {
-            OrderCustomer = c;
+            OrderProductId = p;
         }
 
         #endregion Public Methods

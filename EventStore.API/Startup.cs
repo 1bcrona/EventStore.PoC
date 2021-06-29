@@ -1,23 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Net;
+using EventStore.API.Model;
+using EventStore.API.Model.Response;
 using EventStore.Store.EventStore.Impl.MartenDb;
 using EventStore.Store.EventStore.Infrastructure;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Reflection;
-using EventStore.API.Model;
-using EventStore.API.Model.Response;
-using EventStore.API.Model.Validation;
-using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Net;
+using System.Reflection;
 
 namespace EventStore.API
 {
@@ -45,7 +42,6 @@ namespace EventStore.API
         {
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
-            
             app.UseExceptionHandler(builder =>
             {
                 builder.Run(async context =>
@@ -84,8 +80,20 @@ namespace EventStore.API
             app.UseRouting();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+        }
 
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddMediatR(Assembly.GetAssembly(GetType()));
+            services.AddSingleton<IEventStore, MartenEventStore>(_ => new MartenEventStore(Configuration.GetConnectionString("default")));
 
+            services.AddControllers();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Eventstore.API", Version = "v1" });
+            });
         }
 
         private void ConfigureSwagger(IApplicationBuilder appBuilder)
@@ -105,20 +113,6 @@ namespace EventStore.API
             {
                 config.SwaggerEndpoint($"{basePath}swagger/v1/swagger.json", "Eventstore.Api v1");
             });
-        }
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddMediatR(Assembly.GetAssembly(GetType()));
-            services.AddSingleton<IEventStore, MartenEventStore>(_ => new MartenEventStore(Configuration.GetConnectionString("default")));
-
-            services.AddControllers();
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Eventstore.API", Version = "v1" });
-            });
-
         }
 
         #endregion Public Methods

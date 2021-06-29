@@ -3,7 +3,7 @@ using EventStore.Domain.Event.Infrastructure;
 
 namespace EventStore.Domain.Event.Impl
 {
-    public class OrderPlaced : Event<Order>
+    public class OrderCreated : Event<Order>
     {
     }
 }

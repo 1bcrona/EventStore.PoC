@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace EventStore.Domain.ValueObject
 {
@@ -18,12 +17,9 @@ namespace EventStore.Domain.ValueObject
             Url = url;
         }
 
-
         public ProductLocation() : this(String.Empty)
         {
         }
-
-
 
         #endregion Public Constructors
     }

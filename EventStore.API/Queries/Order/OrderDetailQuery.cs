@@ -1,9 +1,10 @@
-﻿using System;
+﻿using EventStore.API.Model.Response.Dto;
 using MediatR;
+using System;
 
 namespace EventStore.API.Queries.Order
 {
-    public class OrderDetailQuery : IRequest<Domain.Entity.Order>
+    public class OrderDetailQuery : IRequest<OrderDto>
     {
         #region Public Properties
 

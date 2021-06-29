@@ -1,10 +1,7 @@
 ﻿using EventStore.Domain.Entity;
 using EventStore.Domain.Event.Impl;
 using EventStore.StreamListener.Projection.Marten.Infrastructure;
-using Marten;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace EventStore.StreamListener.Projection.Marten
 {
@@ -14,7 +11,7 @@ namespace EventStore.StreamListener.Projection.Marten
 
         public ProductProjection()
         {
-            ProjectEvent<OrderPlaced>(@event => @event.Data.OrderProduct.Id, (product, e) =>
+            ProjectEvent<OrderCreated>(@event => @event.Data.OrderProductId, (product, e) =>
             {
                 product.Stock -= e.Data.Quantity;
             });
@@ -24,7 +21,7 @@ namespace EventStore.StreamListener.Projection.Marten
                 product.Id = e.EntityId;
                 product.ProductMetadata = e.Data.ProductMetadata;
                 product.ProductLocation = e.Data.ProductLocation;
-                product.Stock = e.Data?.Stock ?? 0;
+                product.Stock = (int)e.Data?.Stock;
                 product.Price = e.Data.Price;
                 product.Active = true;
             });
@@ -34,8 +31,6 @@ namespace EventStore.StreamListener.Projection.Marten
                 product.Active = false;
             });
         }
-
-
 
         #endregion Public Constructors
     }

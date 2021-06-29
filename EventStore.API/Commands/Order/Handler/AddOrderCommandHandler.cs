@@ -1,16 +1,13 @@
-﻿using System;
+﻿using EventStore.API.Model;
+using EventStore.API.Model.Validation;
+using EventStore.Domain.Event.Impl;
+using EventStore.Domain.ValueObject;
+using EventStore.Store.EventStore.Infrastructure;
+using MediatR;
 using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using EventStore.API.Model;
-using EventStore.API.Model.Validation;
-using EventStore.Domain.Event.Impl;
-using EventStore.Domain.Event.Infrastructure;
-using EventStore.Domain.ValueObject;
-using EventStore.Store.EventStore.Infrastructure;
-using Marten.Linq;
-using MediatR;
 
 namespace EventStore.API.Commands.Order.Handler
 {
@@ -61,13 +58,12 @@ namespace EventStore.API.Commands.Order.Handler
                 throw new ApiException("INSUFFICIENT_AMOUNT", "Product stock is insufficient for this order.", HttpStatusCode.InternalServerError);
             }
 
-
             var order = new Domain.Entity.Order { Quantity = request.Quantity, Amount = new Price() { Currency = productDetails.Price.Currency, Value = productDetails.Price.Value * request.Quantity } };
 
-            order.AssignProduct(productDetails);
-            order.AssignCustomer(customerDetails);
+            order.AssignProductId(productDetails.Id);
+            order.AssignCustomerId(customerDetails.Id);
 
-            await eventCollection.AddEvent(order.Id, new OrderPlaced { AggregateId = order.Id, EntityId = order.Id, Data = order });
+            await eventCollection.AddEvent(order.Id, new OrderCreated { AggregateId = order.Id, EntityId = order.Id, Data = order });
 
             return order;
         }

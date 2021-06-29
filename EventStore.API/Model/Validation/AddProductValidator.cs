@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EventStore.API.Commands.Product;
+﻿using EventStore.API.Commands.Product;
 using FluentValidation;
 
 namespace EventStore.API.Model.Validation
 {
     public class AddProductValidator : AbstractValidator<AddProductCommand>
     {
+        #region Public Constructors
+
         public AddProductValidator()
         {
             RuleFor(command => command).NotNull();
@@ -19,5 +17,7 @@ namespace EventStore.API.Model.Validation
             RuleFor(command => command.Price.Value).GreaterThan(0);
             RuleFor(command => command.Stock).NotNull();
         }
+
+        #endregion Public Constructors
     }
 }

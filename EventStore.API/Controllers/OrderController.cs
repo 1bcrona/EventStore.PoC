@@ -1,15 +1,12 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using EventStore.API.Commands.Order;
-using EventStore.API.Model;
+﻿using EventStore.API.Commands.Order;
 using EventStore.API.Model.Response;
-using EventStore.API.Model.Validation;
+using EventStore.API.Model.Response.Dto;
 using EventStore.API.Queries.Order;
 using EventStore.Domain.Entity;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace EventStore.API.Controllers
 {
@@ -38,9 +35,8 @@ namespace EventStore.API.Controllers
         [Route("{OrderId}")]
         public async Task<IActionResult> Get([FromRoute] OrderDetailQuery query)
         {
-
             var result = await _mediator.Send(query);
-            return Ok(new BaseHttpServiceResponse<Order>() { Data = result });
+            return Ok(new BaseHttpServiceResponse<OrderDto>() { Data = result });
         }
 
         [HttpPost]

@@ -1,15 +1,17 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using EventStore.API.Commands.Customer;
+﻿using EventStore.API.Commands.Customer;
 using EventStore.API.Model;
 using EventStore.API.Model.Response;
+using EventStore.API.Model.Response.Dto;
 using EventStore.API.Model.Validation;
 using EventStore.API.Queries.Customer;
 using EventStore.Domain.Entity;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace EventStore.API.Controllers
 {
@@ -52,16 +54,21 @@ namespace EventStore.API.Controllers
         [Route("{CustomerId}")]
         public async Task<IActionResult> Get([FromRoute] CustomerDetailQuery query)
         {
-
             var result = await _mediator.Send(query);
             return Ok(new BaseHttpServiceResponse<Customer>() { Data = result });
+        }
+
+        [HttpGet]
+        [Route("{CustomerId}/orders")]
+        public async Task<IActionResult> Get([FromRoute] CustomerOrderDetailQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(new BaseHttpServiceResponse<List<OrderDto>>() { Data = result });
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] AddCustomerCommand command)
         {
-
-
             var result = await _mediator.Send(command);
             return Created(String.Empty, new BaseHttpServiceResponse<Customer>() { Data = result });
         }

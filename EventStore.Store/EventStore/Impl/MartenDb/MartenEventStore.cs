@@ -18,7 +18,6 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
 
         private IDaemon _Daemon;
 
-
         public MartenEventStore(string connectionString)
         {
             _DocumentStore = Marten.DocumentStore.For(f =>

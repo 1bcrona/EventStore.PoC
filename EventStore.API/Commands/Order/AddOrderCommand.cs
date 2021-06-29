@@ -1,6 +1,5 @@
-﻿using System;
-using EventStore.Domain.ValueObject;
-using MediatR;
+﻿using MediatR;
+using System;
 
 namespace EventStore.API.Commands.Order
 {
@@ -8,9 +7,8 @@ namespace EventStore.API.Commands.Order
     {
         #region Public Properties
 
-        public Guid ProductId { get; set; }
         public Guid CustomerId { get; set; }
-
+        public Guid ProductId { get; set; }
         public int Quantity { get; set; }
 
         #endregion Public Properties

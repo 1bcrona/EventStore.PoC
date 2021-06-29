@@ -21,10 +21,10 @@ namespace EventStore.Domain.Entity
 
         #region Public Properties
 
+        public Price Price { get; set; }
         public ProductLocation ProductLocation { get; set; }
         public ProductMetadata ProductMetadata { get; set; }
         public int Stock { get; set; }
-        public Price Price { get; set; }
 
         #endregion Public Properties
     }

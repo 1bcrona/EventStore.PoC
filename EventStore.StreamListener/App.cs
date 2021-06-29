@@ -1,12 +1,11 @@
-﻿using System;
+﻿using EventStore.Store.EventStore.Impl.MartenDb;
 using EventStore.Store.EventStore.Infrastructure;
-using EventStore.StreamListener.Projection.Marten;
-using System.Threading.Tasks;
-using EventStore.Store.EventStore.Impl.MartenDb;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace EventStore.StreamListener
 {

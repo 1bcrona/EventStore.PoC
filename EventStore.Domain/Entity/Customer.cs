@@ -1,15 +1,11 @@
 ﻿using EventStore.Domain.Entity.Infrastructure;
 using System;
-using System.Security.Principal;
 
 namespace EventStore.Domain.Entity
 {
     public class Customer : BaseEntity<Guid>
     {
-        private Customer(Guid id)
-        {
-            Id = id;
-        }
+        #region Public Constructors
 
         public Customer(string name) : this(Guid.NewGuid())
         {
@@ -20,10 +16,23 @@ namespace EventStore.Domain.Entity
         {
         }
 
+        #endregion Public Constructors
+
+        #region Private Constructors
+
+        private Customer(Guid id)
+        {
+            Id = id;
+        }
+
+        #endregion Private Constructors
+
+        #region Public Properties
+
+        public string Address { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
-        public string Address { get; set; }
 
-
+        #endregion Public Properties
     }
 }

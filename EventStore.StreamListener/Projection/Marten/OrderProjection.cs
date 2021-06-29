@@ -2,7 +2,6 @@
 using EventStore.Domain.Event.Impl;
 using EventStore.StreamListener.Projection.Marten.Infrastructure;
 using System;
-using System.Data;
 
 namespace EventStore.StreamListener.Projection.Marten
 {
@@ -12,11 +11,11 @@ namespace EventStore.StreamListener.Projection.Marten
 
         public OrderProjection()
         {
-            ProjectEvent<OrderPlaced>(@event => @event.EntityId, (order, e) =>
+            ProjectEvent<OrderCreated>(@event => @event.EntityId, (order, e) =>
             {
                 order.Id = e.EntityId;
-                order.AssignCustomer(e.Data.OrderCustomer);
-                order.AssignProduct(e.Data.OrderProduct);
+                order.AssignCustomerId(e.Data.OrderCustomerId);
+                order.AssignProductId(e.Data.OrderProductId);
                 order.Active = true;
             });
 

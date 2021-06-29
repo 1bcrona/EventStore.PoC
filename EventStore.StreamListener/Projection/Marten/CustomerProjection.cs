@@ -15,8 +15,8 @@ namespace EventStore.StreamListener.Projection.Marten
             {
                 customer.Id = e.EntityId;
                 customer.Name = e.Data?.Name;
-                customer.Surname = e.Data.Surname;
-                customer.Address = e.Data.Address;
+                customer.Surname = e.Data?.Surname;
+                customer.Address = e.Data?.Address;
                 customer.Active = true;
             });
 

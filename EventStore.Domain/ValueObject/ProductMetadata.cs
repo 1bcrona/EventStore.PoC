@@ -15,7 +15,6 @@
 
         public string Title { get; set; }
 
-
         #endregion Public Properties
     }
 }
