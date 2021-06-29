@@ -16,6 +16,8 @@ namespace EventStore.StreamListener.Projection.Marten
                 order.Id = e.EntityId;
                 order.AssignCustomerId(e.Data.OrderCustomerId);
                 order.AssignProductId(e.Data.OrderProductId);
+                order.TotalPrice = e.Data.TotalPrice;
+                order.Quantity = e.Data.Quantity;
                 order.Active = true;
             });
 

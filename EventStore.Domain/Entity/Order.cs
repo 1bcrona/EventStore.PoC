@@ -21,7 +21,7 @@ namespace EventStore.Domain.Entity
 
         #region Public Properties
 
-        public Price Amount { get; set; }
+        public Price TotalPrice { get; set; }
         public Guid OrderCustomerId { get; set; }
         public Guid OrderProductId { get; set; }
         public int Quantity { get; set; }

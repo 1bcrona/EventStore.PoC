@@ -1,4 +1,6 @@
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-focal AS base
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.8.0/wait /wait
+RUN chmod +x /wait
 FROM mcr.microsoft.com/dotnet/sdk:5.0-focal AS build
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.8.0/wait /wait
 RUN chmod +x /wait

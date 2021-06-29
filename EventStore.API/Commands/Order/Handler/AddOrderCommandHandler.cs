@@ -58,7 +58,7 @@ namespace EventStore.API.Commands.Order.Handler
                 throw new ApiException("INSUFFICIENT_AMOUNT", "Product stock is insufficient for this order.", HttpStatusCode.InternalServerError);
             }
 
-            var order = new Domain.Entity.Order { Quantity = request.Quantity, Amount = new Price() { Currency = productDetails.Price.Currency, Value = productDetails.Price.Value * request.Quantity } };
+            var order = new Domain.Entity.Order { Quantity = request.Quantity, TotalPrice = new Price() { Currency = productDetails.Price.Currency, Value = productDetails.Price.Value * request.Quantity } };
 
             order.AssignProductId(productDetails.Id);
             order.AssignCustomerId(customerDetails.Id);

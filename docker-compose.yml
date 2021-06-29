@@ -13,6 +13,7 @@ services:
     build:
       context: .
       target: stream_listener
+    command: sh -c "/wait && dotnet EventStore.StreamListener.dll"
     environment:
       - WAIT_HOSTS=postgres:5432
       - WAIT_HOSTS_TIMEOUT=300
@@ -25,6 +26,7 @@ services:
     build: 
       context: .
       target: final
+    command: sh -c "/wait && dotnet EventStore.API.dll"
     ports:
       - 5000:5000
     environment:

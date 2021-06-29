@@ -51,7 +51,7 @@ namespace EventStore.API.Queries.Order.Handler
             var customer = await collection.Query<Domain.Entity.Customer>(order.OrderCustomerId);
 
             var orderDto = new OrderDto()
-            { Amount = order.Amount, Quantity = order.Quantity, Product = product, Customer = customer };
+            { Amount = order.TotalPrice, Quantity = order.Quantity, Product = product, Customer = customer };
 
             return orderDto;
         }
