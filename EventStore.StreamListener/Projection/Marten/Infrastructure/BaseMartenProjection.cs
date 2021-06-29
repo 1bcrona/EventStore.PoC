@@ -1,10 +1,10 @@
-﻿using EventStore.Domain.Entity.Infrastructure;
+﻿using System;
+using System.Collections.Generic;
+using EventStore.Domain.Entity.Infrastructure;
 using EventStore.Domain.Event.Infrastructure;
 using EventStore.Store.EventStore.Infrastructure;
 using Marten.Events.Projections;
 using Marten.Schema;
-using System;
-using System.Collections.Generic;
 
 namespace EventStore.StreamListener.Projection.Marten.Infrastructure
 {
@@ -12,7 +12,6 @@ namespace EventStore.StreamListener.Projection.Marten.Infrastructure
     {
         #region Public Events
 
-        public event EventHandler<object> ProjectionUpdated;
 
         #endregion Public Events
 

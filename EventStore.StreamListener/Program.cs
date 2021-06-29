@@ -16,45 +16,11 @@ namespace EventStore.StreamListener
 {
     internal class Program
     {
-        #region Private Properties
+        private static readonly App _APP = new();
 
-        private static IConfigurationRoot _ConfigurationRoot
+        private static async Task Main(string[] args)
         {
-            get
-            {
-                var builder = new ConfigurationBuilder()
-                    .AddJsonFile("appsettings.json", true, true);
-                return builder.Build();
-            }
+            await _APP.Run();
         }
-
-        #endregion Private Properties
-
-        #region Private Methods
-
-        private static IServiceCollection InitializeContainer()
-        {
-            IServiceCollection services = new ServiceCollection();
-            services.AddScoped<IEventStore, MartenEventStore>(_ =>
-                new MartenEventStore(_ConfigurationRoot.GetConnectionString("marten")));
-            services.AddSingleton<App>();
-
-            return services;
-        }
-
-
-        private static void Main(string[] args)
-        {
-
-            var serviceCollection = InitializeContainer();
-
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-
-            serviceProvider?.GetService<App>()?.Run();
-
-            Console.ReadKey();
-        }
-
-        #endregion Private Methods
     }
 }

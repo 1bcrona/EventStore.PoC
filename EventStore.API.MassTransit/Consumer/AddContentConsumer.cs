@@ -39,17 +39,17 @@ namespace EventStore.API.MassTransit.Consumer
 
         public async Task Consume(ConsumeContext<AddContentCommand> context)
         {
-            var c = new Content
+            var c = new Product
             {
-                ContentCdnLink = new ContentCdnLink(context.Message.Url),
-                ContentMetadata = new ContentMetadata(context.Message.Title)
+                ProductLocation = new ProductLocation(context.Message.Url),
+                ProductMetadata = new ProductMetadata(context.Message.Title)
             };
 
             var eventCollection = await _DocumentStore.GetCollection();
 
             var events = new IEvent[]
             {
-                new ContentCreated {AggregateId = c.Id, EntityId = c.Id, Data = c}
+                new ProductCreated {AggregateId = c.Id, EntityId = c.Id, Data = c}
             };
 
             foreach (var @event in events) await eventCollection.AddEvent(c.Id, @event);

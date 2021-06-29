@@ -27,7 +27,7 @@ namespace EventStore.API.MassTransit.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] AddContentCommand command)
         {
-            var content = await _RequestClient.GetResponse<Content>(command);
+            var content = await _RequestClient.GetResponse<Product>(command);
             _Logger.Log(LogLevel.Debug, "Command Executed");
             return Ok(content.Message);
         }

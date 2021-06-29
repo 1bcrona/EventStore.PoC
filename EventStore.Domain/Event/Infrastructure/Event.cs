@@ -2,7 +2,7 @@
 
 namespace EventStore.Domain.Event.Infrastructure
 {
-    public abstract class Event<T> : IEvent where T : class
+    public abstract class Event<T> : IEvent
     {
         #region Public Properties
 
