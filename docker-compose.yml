@@ -1,35 +1,41 @@
 version: "3"
 services:
-  betcr-scheduled-server:
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+  
+  eventstore-listener:
     restart: always
-    
     build:
       context: .
-      target: scheduled
-    ports:
-      - 5002:5002
+      target: stream_listener
     environment:
-      - BETCR_ENVIRONMENT=Production
-      - ASPNETCORE_URLS=http://+:5002
-    volumes:
-      - ~/source/repos/BetCR/DB:/DB
-
-  betcr-app-server:
+      - WAIT_HOSTS=postgres:5432
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+    depends_on:
+      - postgres
+  eventstore-api:
     restart: always
     build: 
       context: .
       target: final
     ports:
       - 5000:5000
-      - 5001:5001
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_URLS=https://+:5000;http://+:5001
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=p123456
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
-    volumes:
-      - ~/.aspnet/https:/https:ro
-      - ~/source/repos/BetCR/DB:/DB
+      - ASPNETCORE_URLS=http://+:5000
+      - WAIT_HOSTS=postgres:5432
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+    depends_on:
+      - postgres
 
 
     

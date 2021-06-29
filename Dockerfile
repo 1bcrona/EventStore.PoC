@@ -1,25 +1,21 @@
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-focal AS base
 FROM mcr.microsoft.com/dotnet/sdk:5.0-focal AS build
-RUN apt-get update \
-    && apt-get install -y --allow-unauthenticated \
-        libc6-dev \
-        libgdiplus \
-        libx11-dev \
-     && rm -rf /var/lib/apt/lists/*
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.8.0/wait /wait
+RUN chmod +x /wait
 
-EXPOSE 5001
 EXPOSE 5000
-EXPOSE 5002
+
+
 
 
 
 WORKDIR /src
 
 COPY ["EventStore.sln", "EventStore.sln"]
-
-COPY src/*/*.csproj ./
-RUN for file in $(ls *.csproj); do mkdir -p src/${file%.*}/ && mv $file src/${file%.*}/; done
-
+COPY ["EventStore.API/EventStore.API.csproj","EventStore.API/" ]
+COPY ["EventStore.Domain/EventStore.Domain.csproj","EventStore.Domain/" ]
+COPY ["EventStore.Store/EventStore.Store.csproj","EventStore.Store/" ]
+COPY ["EventStore.StreamListener/EventStore.StreamListener.csproj","EventStore.StreamListener/" ]
 
 RUN dotnet restore
 
@@ -40,10 +36,10 @@ RUN dotnet publish "EventStore.API.csproj" --no-build --no-restore -c Release -o
 FROM build AS stream_listener
 WORKDIR /app
 COPY --from=runtime /app/stream_listener .
-CMD ["dotnet", "BetCR.Scheduled.dll"]
+CMD ["dotnet", "EventStore.StreamListener.dll"]
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-CMD ["dotnet", "BetCR.Web.dll"]
+CMD ["dotnet", "EventStore.API.dll"]
 
