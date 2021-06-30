@@ -17,8 +17,8 @@ Operation that reads from database.
 
 ## How it works
 
-These two operations are handled separately on the API. "Command" operations generates operation-related event and writes to "Event Store" database.
-After this process, there is a Background Service that listens to the events in the "Event Store". This service creates Projections over events and writes these projections to the "Event Store" database.
+These two operations are handled separately on the API. **Command** operations generates operation-related event and writes to **Event Store** database.
+After this process, there is a **Background Service** that listens to the events in the "Event Store". This service creates **Projections** over events and writes these projections to the **Event Store** database.
 "Query" operations are processed by querying through these prepared projections.
 
 
@@ -31,6 +31,7 @@ After this process, there is a Background Service that listens to the events in 
 
    - [Marten](https://github.com/JasperFx/marten) - Event Store
    - [MediatR](https://github.com/jbogard/MediatR) - For Processing Commands, Queries, Events
+   - [TestEnvironment.Docker](https://github.com/Deffiss/testenvironment-docker)
 
 ## Solution Structure
 
