@@ -6,7 +6,7 @@ EventStore is an application prepared with the Event Sourcing design pattern.
 
 ![alt text](https://github.com/1bcrona/EventStore.PoC/blob/master/eventstore_diagram.png?raw=true)
 
-User, can consume this API by two types of operations
+A User, can consume this API by two types of operations
 #### Command
 
 Operation that writes on the database.
