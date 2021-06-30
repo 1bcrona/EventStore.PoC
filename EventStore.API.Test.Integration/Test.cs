@@ -60,8 +60,13 @@ namespace EventStore.API.Test.Integration
             Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
 
             var addOrderCommand = new AddOrderCommand() { };
-            response = await _Fixture._HttpClient.PostAsync($"/Order/{Guid.NewGuid().ToString("D")}",
+            response = await _Fixture._HttpClient.PostAsync($"/Order/",
                new StringContent(JsonConvert.SerializeObject(addOrderCommand), Encoding.UTF8, "application/json"));
+            Assert.True(response.StatusCode == HttpStatusCode.NotFound);
+
+
+            response = await _Fixture._HttpClient.PostAsync($"/Order/{Guid.NewGuid().ToString()}",
+                new StringContent(JsonConvert.SerializeObject(addOrderCommand), Encoding.UTF8, "application/json"));
             Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
 
             response = await _Fixture._HttpClient.GetAsync($"/Customer/123456789"); //NotGuid

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using EventStore.API.Aggregate.Product;
+using EventStore.API.Aggregate;
 using EventStore.API.Model.Response.Dto;
 
 namespace EventStore.API.Queries.Customer.Handler
