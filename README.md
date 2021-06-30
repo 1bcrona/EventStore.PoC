@@ -78,7 +78,7 @@ The application includes integration tests on its own.
 These tests are located under **EventStore.API.Test.Integration**.
  
 To run these tests;
- * Compile the solution.
+ * Build the solution.
  * Open the terminal at **EventStore.API.Test.Integration/bin/Debug/5.0** directory
  * Execute following command
  <pre><code>dotnet test EventStore.API.Test.Integration.dll</code></pre>
