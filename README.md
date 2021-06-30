@@ -1,7 +1,6 @@
-# EventStore.PoC
+# EventStore
 
-EventStore is an application prepared with the Event Sourcing design pattern.
-
+EventStore is designed to be an example of Event Sourcing design pattern.
 ## Design
 
 ![alt text](https://github.com/1bcrona/EventStore.PoC/blob/master/eventstore_diagram.png?raw=true)
