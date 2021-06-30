@@ -86,6 +86,7 @@ namespace EventStore.API.Test.Integration
         [Fact, TestPriority(1)]
         public async Task Returns_Unauthorized()
         {
+            Thread.Sleep(2000);
             var response = await _Fixture._HttpClient.GetAsync($"/Customer/CustomerId/orders");
             Assert.True(response.StatusCode == HttpStatusCode.Unauthorized);
 
@@ -120,70 +121,70 @@ namespace EventStore.API.Test.Integration
         #endregion Public Methods
 
         [Fact, TestPriority(3)]
-        public async void Returns_Order_Errors()
+        public async void Returns_Business_Errors()
         {
             var addCustomerCommand = new AddCustomerCommand { Name = "Test", Surname = "User", Address = "Address" };
             var response = await _Fixture._HttpClient.PostAsync($"/Customer",
                 new StringContent(JsonConvert.SerializeObject(addCustomerCommand), Encoding.UTF8, "application/json"));
 
-            Assert.True(response.StatusCode == HttpStatusCode.Created);
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
-            var customerId = JsonConvert.DeserializeObject<BaseHttpServiceResponse<Customer>>(await response.Content.ReadAsStringAsync()).Data.Id;
-            Thread.Sleep(2000);
+            var customerId = JsonConvert.DeserializeObject<BaseHttpServiceResponse<CustomerDto>>(await response.Content.ReadAsStringAsync()).Data.Id;
+            Thread.Sleep(100);
 
             var addProductCommand = new AddProductCommand() { Price = new Price() { Currency = "TRY", Value = 10 }, Title = "TesProduct", Stock = 10, Url = "TestProductUrl" };
             response = await _Fixture._HttpClient.PostAsync($"/Product",
                 new StringContent(JsonConvert.SerializeObject(addProductCommand), Encoding.UTF8, "application/json"));
             Assert.True(response.StatusCode == HttpStatusCode.Created);
-            var productId = JsonConvert.DeserializeObject<BaseHttpServiceResponse<Customer>>(await response.Content.ReadAsStringAsync()).Data.Id;
+            var productId = JsonConvert.DeserializeObject<BaseHttpServiceResponse<ProductDto>>(await response.Content.ReadAsStringAsync()).Data.Id;
 
-            Thread.Sleep(2000);
-            var addOrderCommand = new AddOrderCommand() { Quantity = 11, CustomerId = customerId, ProductId = productId };
+            Thread.Sleep(100);
+            var addOrderCommand = new AddOrderCommand() { Quantity = 11, CustomerId = Guid.Parse(customerId), ProductId = Guid.Parse(productId) };
             response = await _Fixture._HttpClient.PostAsync($"/Order/{productId}",
                 new StringContent(JsonConvert.SerializeObject(addOrderCommand), Encoding.UTF8, "application/json"));
-            Assert.True(response.StatusCode == HttpStatusCode.InternalServerError);
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
 
             var responseAsError = JsonConvert.DeserializeObject<BaseHttpServiceResponse<string>>(await response.Content.ReadAsStringAsync()).Error;
 
             Assert.True(responseAsError.ErrorCode == "INSUFFICIENT_AMOUNT");
 
-            Thread.Sleep(2000);
+            Thread.Sleep(100);
             response = await _Fixture._HttpClient.DeleteAsync($"/Product/{productId}");
 
-            Assert.True(response.StatusCode == HttpStatusCode.OK);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            Thread.Sleep(2000);
+            Thread.Sleep(100);
             response = await _Fixture._HttpClient.PostAsync($"/Order/{productId}",
                 new StringContent(JsonConvert.SerializeObject(addOrderCommand), Encoding.UTF8, "application/json"));
 
-            Assert.True(response.StatusCode == HttpStatusCode.InternalServerError);
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
 
             responseAsError = JsonConvert.DeserializeObject<BaseHttpServiceResponse<string>>(await response.Content.ReadAsStringAsync()).Error;
 
             Assert.True(responseAsError.ErrorCode == "PRODUCT_NOT_FOUND");
 
-            Thread.Sleep(2000);
+            Thread.Sleep(100);
             response = await _Fixture._HttpClient.DeleteAsync($"/Customer/{customerId}");
 
-            Assert.True(response.StatusCode == HttpStatusCode.OK);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            Thread.Sleep(2000);
+            Thread.Sleep(100);
             response = await _Fixture._HttpClient.PostAsync($"/Order/{productId}",
                 new StringContent(JsonConvert.SerializeObject(addOrderCommand), Encoding.UTF8, "application/json"));
 
-            Assert.True(response.StatusCode == HttpStatusCode.InternalServerError);
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
 
             responseAsError = JsonConvert.DeserializeObject<BaseHttpServiceResponse<string>>(await response.Content.ReadAsStringAsync()).Error;
 
-            Assert.True(responseAsError.ErrorCode == "CUSTOMER_NOT_FOUND");
+            Assert.Equal("CUSTOMER_NOT_FOUND", responseAsError.ErrorCode);
         }
 
         [Fact, TestPriority(4)]
         public async void Returns_Successful()
         {
-            var customer = new Customer()
-            { Active = true, Address = "Address", Id = Guid.Empty, Name = "Test", Surname = "User" };
-            Thread.Sleep(2000);
+            var customer = new CustomerDto()
+            { Address = "Address", Name = "Test", Surname = "User" };
+            Thread.Sleep(100);
 
             var addCustomerCommand = new AddCustomerCommand { Name = customer.Name, Surname = customer.Surname, Address = customer.Address };
             var response = await _Fixture._HttpClient.PostAsync($"/Customer",
@@ -191,17 +192,16 @@ namespace EventStore.API.Test.Integration
 
             Assert.True(response.StatusCode == HttpStatusCode.Created);
 
-            customer.Id = JsonConvert.DeserializeObject<BaseHttpServiceResponse<Customer>>(await response.Content.ReadAsStringAsync()).Data.Id;
+            customer.Id = JsonConvert.DeserializeObject<BaseHttpServiceResponse<CustomerDto>>(await response.Content.ReadAsStringAsync()).Data.Id;
 
-            var product = new Product()
+            var product = new ProductDto()
             {
                 ProductLocation = new ProductLocation("TestProductUrl"),
                 ProductMetadata = new ProductMetadata("TestProduct"),
-                Active = true,
                 Price = new Price() { Currency = "TRY", Value = 10 },
                 Stock = 10
             };
-            Thread.Sleep(2000);
+            Thread.Sleep(100);
 
             var addProductCommand = new AddProductCommand() { Price = product.Price, Stock = product.Stock, Title = product.ProductMetadata.Title, Url = product.ProductLocation.Url };
             response = await _Fixture._HttpClient.PostAsync($"/Product",
@@ -209,39 +209,51 @@ namespace EventStore.API.Test.Integration
 
             Assert.True(response.StatusCode == HttpStatusCode.Created);
 
-            product.Id = JsonConvert.DeserializeObject<BaseHttpServiceResponse<Customer>>(await response.Content.ReadAsStringAsync()).Data.Id;
+            product.Id = JsonConvert.DeserializeObject<BaseHttpServiceResponse<ProductDto>>(await response.Content.ReadAsStringAsync()).Data.Id;
 
-            var order = new Order()
+            var order = new OrderDto()
             {
-                Active = true,
                 Quantity = 10,
-                OrderCustomerId = customer.Id,
-                OrderProductId = product.Id,
-                TotalPrice = new Price() { Currency = "TRY", Value = 150 }
+                Customer = customer,
+                Product = product,
+                TotalPrice = new Price() { Currency = "TRY", Value = 100 },
             };
-            Thread.Sleep(2000);
+            Thread.Sleep(100);
 
-            var addOrderCommand = new AddOrderCommand() { Quantity = order.Quantity, CustomerId = order.OrderCustomerId, ProductId = order.OrderProductId };
-            response = await _Fixture._HttpClient.PostAsync($"/Order/{order.OrderProductId}",
+            var addOrderCommand = new AddOrderCommand() { Quantity = order.Quantity, CustomerId = Guid.Parse(order.Customer.Id), ProductId = Guid.Parse(order.Product.Id) };
+            response = await _Fixture._HttpClient.PostAsync($"/Order/{order.Product.Id}",
                 new StringContent(JsonConvert.SerializeObject(addOrderCommand), Encoding.UTF8, "application/json"));
 
-            Assert.True(response.StatusCode == HttpStatusCode.Created);
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
-            order.Id = JsonConvert.DeserializeObject<BaseHttpServiceResponse<Customer>>(await response.Content.ReadAsStringAsync()).Data.Id;
+            order.Id = JsonConvert.DeserializeObject<BaseHttpServiceResponse<OrderDto>>(await response.Content.ReadAsStringAsync()).Data.Id;
+
+
+            #region GetOrder
+            response = await _Fixture._HttpClient.GetAsync($"/Order/{order.Id}");
+            Assert.True(response.StatusCode == HttpStatusCode.OK);
+            var orderGot = JsonConvert.DeserializeObject<BaseHttpServiceResponse<OrderDto>>(await response.Content.ReadAsStringAsync()).Data;
+            Assert.NotNull(orderGot);
+            Assert.Equal(orderGot, order, new OrderEqualityComparer());
+            #endregion
+
+
+
 
             #region Get Customer
-            Thread.Sleep(2000);
+            Thread.Sleep(100);
 
             response = await _Fixture._HttpClient.GetAsync($"/Customer/{customer.Id}");
 
-            Assert.True(response.StatusCode == HttpStatusCode.OK);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-            var customerGot = JsonConvert.DeserializeObject<BaseHttpServiceResponse<Customer>>(await response.Content.ReadAsStringAsync()).Data;
+            var customerGot = JsonConvert.DeserializeObject<BaseHttpServiceResponse<CustomerDto>>(await response.Content.ReadAsStringAsync()).Data;
 
-            Assert.True(customerGot.Active);
             Assert.Equal(customerGot, customer, new CustomerEqualityComparer());
 
             #endregion Get Customer
+
+
 
             #region Get Customer Orders
             Thread.Sleep(2000);
@@ -250,15 +262,26 @@ namespace EventStore.API.Test.Integration
 
             Assert.True(response.StatusCode == HttpStatusCode.OK);
 
-            var orderGot = JsonConvert.DeserializeObject<BaseHttpServiceResponse<List<OrderDto>>>(await response.Content.ReadAsStringAsync()).Data;
+            var ordersGot = JsonConvert.DeserializeObject<BaseHttpServiceResponse<List<OrderDto>>>(await response.Content.ReadAsStringAsync()).Data;
 
-            var existingOrder = orderGot.FirstOrDefault(o => o.OrderId == order.Id);
+            var existingOrders = ordersGot.FirstOrDefault(o => o.Id == order.Id.ToString());
 
-            Assert.NotNull(existingOrder);
-
-            Assert.Equal(existingOrder.OrderId, order.Id);
-
+            Assert.NotNull(existingOrders);
+            Assert.Equal(existingOrders.Product, product, new ProductEqualityComparer());
+            Assert.Equal(existingOrders.Customer, customer, new CustomerEqualityComparer());
             #endregion Get Customer Orders
+
+            #region Get Product
+
+            response = await _Fixture._HttpClient.GetAsync($"/Product/{product.Id}");
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var productGot = JsonConvert.DeserializeObject<BaseHttpServiceResponse<ProductDto>>(await response.Content.ReadAsStringAsync()).Data;
+
+            Assert.Equal(productGot, product, new ProductEqualityComparer());
+            Assert.Equal(0, productGot.Stock);
+            #endregion
         }
     }
 }

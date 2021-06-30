@@ -27,6 +27,8 @@ namespace EventStore.Store.EventStore.Infrastructure
 
         Task<IEvent> ReadStream(Guid streamId);
 
+        Task<T> AggregateStream<T>(Guid streamId) where T : class;
+
         #endregion Public Methods
     }
 }

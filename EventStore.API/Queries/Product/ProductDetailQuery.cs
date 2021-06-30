@@ -1,9 +1,10 @@
 ﻿using MediatR;
 using System;
+using EventStore.API.Model.Response.Dto;
 
 namespace EventStore.API.Queries.Product
 {
-    public class ProductDetailQuery : IRequest<Domain.Entity.Product>
+    public class ProductDetailQuery : IRequest<ProductDto>
     {
         #region Public Properties
 

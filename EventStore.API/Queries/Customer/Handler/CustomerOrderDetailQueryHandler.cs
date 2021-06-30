@@ -52,7 +52,14 @@ namespace EventStore.API.Queries.Customer.Handler
 
                 var product = await collection.Query<Domain.Entity.Product>(order.OrderProductId);
                 var customer = await collection.Query<Domain.Entity.Customer>(order.OrderCustomerId);
-                var orderDto = new OrderDto() { OrderId = order.Id, Amount = order.TotalPrice, Quantity = order.Quantity, Product = product, Customer = customer };
+                var orderDto = new OrderDto()
+                {
+                    Id = order.Id.ToString(),
+                    TotalPrice = order.TotalPrice,
+                    Quantity = order.Quantity,
+                    Product = product,
+                    Customer = customer
+                };
                 orderDtos.Add(orderDto);
             }
 

@@ -1,4 +1,5 @@
-﻿using EventStore.API.Model;
+﻿using System;
+using EventStore.API.Model;
 using EventStore.API.Model.Validation;
 using EventStore.Domain.Event.Impl;
 using EventStore.Domain.ValueObject;
@@ -8,15 +9,16 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using EventStore.API.Model.Response.Dto;
 
 namespace EventStore.API.Commands.Product.Handler
 {
-    public class AddProductCommandHandler : IRequestHandler<AddProductCommand, Domain.Entity.Product>
+    public class AddProductCommandHandler : IRequestHandler<AddProductCommand, ProductDto>
     {
         #region Private Fields
 
         private readonly IEventStore _DocumentStore;
-
+        private static Guid StreamId = Guid.Parse("7eab5d62-5c65-40fe-aea0-f0148646f593");
         #endregion Private Fields
 
         #region Public Constructors
@@ -30,7 +32,7 @@ namespace EventStore.API.Commands.Product.Handler
 
         #region Public Methods
 
-        public async Task<Domain.Entity.Product> Handle(AddProductCommand request, CancellationToken cancellationToken)
+        public async Task<ProductDto> Handle(AddProductCommand request, CancellationToken cancellationToken)
         {
             var validationResult = await new AddProductValidator().ValidateAsync(request, cancellationToken);
             if (!validationResult.IsValid)

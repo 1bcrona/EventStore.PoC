@@ -21,9 +21,9 @@ namespace EventStore.StreamListener.Projection.Marten
                 order.Active = true;
             });
 
-            ProjectEvent<OrderDeleted>(@event => @event.EntityId, (playedContent, _) =>
+            ProjectEvent<OrderDeleted>(@event => @event.EntityId, (order, _) =>
             {
-                playedContent.Active = false;
+                order.Active = false;
             });
         }
 

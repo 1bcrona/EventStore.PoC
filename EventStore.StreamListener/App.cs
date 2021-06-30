@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using EventStore.StreamListener.Projection.Marten;
 
 namespace EventStore.StreamListener
 {
@@ -38,6 +39,10 @@ namespace EventStore.StreamListener
                 .UseEnvironment(environment)
                 .Build();
 
+
+      
+
+
             await host.RunAsync();
         }
 
@@ -50,6 +55,9 @@ namespace EventStore.StreamListener
             services.AddScoped<IEventStore, MartenEventStore>(_ =>
                 new MartenEventStore(Configuration.GetConnectionString("marten")));
             services.AddSingleton<App>();
+
+
+
             services.AddHostedService<ProjectionRunner>();
         }
 

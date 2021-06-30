@@ -58,7 +58,7 @@ namespace EventStore.API.Controllers
         public async Task<IActionResult> Get([FromRoute] CustomerDetailQuery query)
         {
             var result = await _mediator.Send(query);
-            return Ok(new BaseHttpServiceResponse<Customer>() { Data = result });
+            return Ok(new BaseHttpServiceResponse<CustomerDto>() { Data = result });
         }
 
         [HttpGet]
@@ -75,7 +75,7 @@ namespace EventStore.API.Controllers
         public async Task<IActionResult> Post([FromBody] AddCustomerCommand command)
         {
             var result = await _mediator.Send(command);
-            return Created(String.Empty, new BaseHttpServiceResponse<Customer>() { Data = result });
+            return Created(String.Empty, new BaseHttpServiceResponse<CustomerDto>() { Data = result });
         }
 
         #endregion Public Methods

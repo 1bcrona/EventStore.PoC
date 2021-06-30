@@ -6,10 +6,12 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using EventStore.API.Aggregate.Product;
+using EventStore.API.Model.Response.Dto;
 
 namespace EventStore.API.Queries.Customer.Handler
 {
-    public class CustomerDetailQueryHandler : IRequestHandler<CustomerDetailQuery, Domain.Entity.Customer>
+    public class CustomerDetailQueryHandler : IRequestHandler<CustomerDetailQuery, CustomerDto>
     {
         #region Public Constructors
 
@@ -28,7 +30,7 @@ namespace EventStore.API.Queries.Customer.Handler
 
         #region Public Methods
 
-        public async Task<Domain.Entity.Customer> Handle(CustomerDetailQuery request, CancellationToken cancellationToken)
+        public async Task<CustomerDto> Handle(CustomerDetailQuery request, CancellationToken cancellationToken)
         {
             var validationResult = await new CustomerDetailQueryValidator().ValidateAsync(request, cancellationToken);
             if (!validationResult.IsValid)
@@ -39,11 +41,10 @@ namespace EventStore.API.Queries.Customer.Handler
 
             var collection = await _DocumentStore.GetCollection();
 
-            var content = await collection.Query<Domain.Entity.Customer>(request.CustomerId);
+            var customer = (await collection.AggregateStream<CustomerAggregate>(request.CustomerId)).Data;
 
-            if (!content.Active) return null; 
-
-            return content;
+            if (customer == null) return null;
+            return !customer.Active ? null : customer;
         }
 
         #endregion Public Methods

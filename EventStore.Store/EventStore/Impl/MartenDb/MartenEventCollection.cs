@@ -85,6 +85,16 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             return await ReadStreamInternal(streamId);
         }
 
+        public async Task<T> AggregateStream<T>(Guid streamId) where T : class
+        {
+            using var session = this._DocumentStore.DirtyTrackedSession(IsolationLevel.Serializable);
+
+            var item =await session.Events.AggregateStreamAsync<T>(streamId);
+
+            return item;
+
+        }
+
         public async Task<IEvent> ReadStream(string streamId)
         {
             return await ReadStreamInternal(streamId);
@@ -144,7 +154,7 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
 
         private async Task<bool> AddEventInternal(GuidOrStringType streamId, IEvent @event)
         {
-            using var session = _DocumentStore.DirtyTrackedSession(IsolationLevel.Serializable);
+            using var session = _DocumentStore.LightweightSession(IsolationLevel.Serializable);
             streamId ??= Guid.NewGuid();
 
             if (_DocumentStore.Events.StreamIdentity == StreamIdentity.AsGuid)
@@ -158,7 +168,7 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
 
         private async Task<bool> AddEventsInternal(GuidOrStringType streamId, IEvent[] events)
         {
-            using var session = _DocumentStore.DirtyTrackedSession(IsolationLevel.Serializable);
+            using var session = _DocumentStore.LightweightSession();
             streamId ??= Guid.NewGuid();
 
             if (_DocumentStore.Events.StreamIdentity == StreamIdentity.AsGuid)

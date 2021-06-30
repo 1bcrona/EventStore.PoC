@@ -7,10 +7,11 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using EventStore.API.Model.Response.Dto;
 
 namespace EventStore.API.Commands.Customer.Handler
 {
-    public class AddCustomerCommandHandler : IRequestHandler<AddCustomerCommand, Domain.Entity.Customer>
+    public class AddCustomerCommandHandler : IRequestHandler<AddCustomerCommand, CustomerDto>
     {
         #region Private Fields
 
@@ -29,7 +30,7 @@ namespace EventStore.API.Commands.Customer.Handler
 
         #region Public Methods
 
-        public async Task<Domain.Entity.Customer> Handle(AddCustomerCommand request, CancellationToken cancellationToken)
+        public async Task<CustomerDto> Handle(AddCustomerCommand request, CancellationToken cancellationToken)
         {
             var validationResult = await new AddCustomerValidator().ValidateAsync(request, cancellationToken);
             if (!validationResult.IsValid)

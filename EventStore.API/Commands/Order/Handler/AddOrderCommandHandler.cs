@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using EventStore.API.Aggregate.Product;
 
 namespace EventStore.API.Commands.Order.Handler
 {
@@ -41,15 +42,15 @@ namespace EventStore.API.Commands.Order.Handler
             }
 
             var eventCollection = await _DocumentStore.GetCollection();
-            var customerDetails = await eventCollection.Query<Domain.Entity.Customer>(request.CustomerId);
+            var customerDetails = (await eventCollection.AggregateStream<CustomerAggregate>(request.CustomerId)).Data;
 
-            if (customerDetails == null)
+            if (customerDetails == null || !customerDetails.Active)
             {
                 throw new ApiException("CUSTOMER_NOT_FOUND", "Customer can not be found in database.", HttpStatusCode.InternalServerError);
             }
-            var productDetails = await eventCollection.Query<Domain.Entity.Product>(request.ProductId);
+            var productDetails = (await eventCollection.AggregateStream<ProductAggregate>(request.ProductId)).Data;
 
-            if (productDetails == null)
+            if (productDetails == null || !productDetails.Active)
             {
                 throw new ApiException("PRODUCT_NOT_FOUND", "Product can not be found in database.", HttpStatusCode.InternalServerError);
             }
@@ -65,6 +66,7 @@ namespace EventStore.API.Commands.Order.Handler
             order.AssignCustomerId(customerDetails.Id);
 
             await eventCollection.AddEvent(order.Id, new OrderCreated { AggregateId = order.Id, EntityId = order.Id, Data = order });
+            await eventCollection.AddEvent(productDetails.Id, new ProductStockUpdated() { AggregateId = productDetails.Id, EntityId = productDetails.Id, Data = order.Quantity * -1 });
 
             return order;
         }

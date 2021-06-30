@@ -4,13 +4,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EventStore.API.Model.Response.Dto;
 using EventStore.Domain.Entity;
 
 namespace EventStore.API.Test.Integration.Comparer
 {
-    public class OrderEqualityComparer : IEqualityComparer<Order>
+    public class OrderEqualityComparer : IEqualityComparer<OrderDto>
     {
-        public bool Equals([AllowNull] Order x, [AllowNull] Order y)
+        public bool Equals([AllowNull] OrderDto x, [AllowNull] OrderDto y)
         {
             if (x == null ^ y == null)
             {
@@ -26,22 +27,22 @@ namespace EventStore.API.Test.Integration.Comparer
 
             return x.Id == y.Id
                    && x.Quantity == y.Quantity
-                                && x.OrderCustomerId == y.OrderCustomerId
-                                && x.OrderProductId == y.OrderProductId
+                                && new CustomerEqualityComparer().Equals(x.Customer, y.Customer)
+                                && new ProductEqualityComparer().Equals(x.Product, y.Product)
                                 && y.TotalPrice.Currency == x.TotalPrice.Currency
                                 && x.TotalPrice.Value == y.TotalPrice.Value;
         }
 
-        public int GetHashCode([DisallowNull] Order obj)
+        public int GetHashCode([DisallowNull] OrderDto obj)
         {
             return obj.GetHashCode();
         }
     }
 
 
-    public class ProductEqualityComparer : IEqualityComparer<Product>
+    public class ProductEqualityComparer : IEqualityComparer<ProductDto>
     {
-        public bool Equals([AllowNull] Product x, [AllowNull] Product y)
+        public bool Equals([AllowNull] ProductDto x, [AllowNull] ProductDto y)
         {
             if (x == null ^ y == null)
             {
@@ -56,23 +57,22 @@ namespace EventStore.API.Test.Integration.Comparer
 
 
             return x.Id == y.Id
-                   && x.Stock == y.Stock
                    && x.ProductLocation.Url == y.ProductLocation.Url
                    && x.ProductMetadata.Title == y.ProductMetadata.Title
                    && y.Price.Currency == x.Price.Currency
                    && x.Price.Value == y.Price.Value;
         }
 
-        public int GetHashCode([DisallowNull] Product obj)
+        public int GetHashCode([DisallowNull] ProductDto obj)
         {
             return obj.GetHashCode();
         }
     }
 
 
-    public class CustomerEqualityComparer : IEqualityComparer<Customer>
+    public class CustomerEqualityComparer : IEqualityComparer<CustomerDto>
     {
-        public bool Equals([AllowNull] Customer x, [AllowNull] Customer y)
+        public bool Equals([AllowNull] CustomerDto x, [AllowNull] CustomerDto y)
         {
             if (x == null ^ y == null)
             {
@@ -93,7 +93,7 @@ namespace EventStore.API.Test.Integration.Comparer
 
         }
 
-        public int GetHashCode([DisallowNull] Customer obj)
+        public int GetHashCode([DisallowNull] CustomerDto obj)
         {
             return obj.GetHashCode();
         }

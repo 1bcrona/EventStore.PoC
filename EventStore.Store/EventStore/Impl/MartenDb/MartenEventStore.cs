@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Baseline.Dates;
 
 namespace EventStore.Store.EventStore.Impl.MartenDb
 {
@@ -70,8 +71,7 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
                     current.Dispose();
                 }
 
-                _Daemon = _DocumentStore.BuildProjectionDaemon(
-                    projections: _DocumentStore.Events.InlineProjections.ToArray());
+                _Daemon = _DocumentStore.BuildProjectionDaemon(projections: _DocumentStore.Events.InlineProjections.ToArray(), settings: new DaemonSettings() { LeadingEdgeBuffer = 0.Seconds() });
                 _Daemon.StartAll();
                 await _Daemon.WaitForNonStaleResults();
             }

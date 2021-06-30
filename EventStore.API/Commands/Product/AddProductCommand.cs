@@ -1,9 +1,10 @@
-﻿using EventStore.Domain.ValueObject;
+﻿using EventStore.API.Model.Response.Dto;
+using EventStore.Domain.ValueObject;
 using MediatR;
 
 namespace EventStore.API.Commands.Product
 {
-    public class AddProductCommand : IRequest<Domain.Entity.Product>
+    public class AddProductCommand : IRequest<ProductDto>
     {
         #region Public Properties
 

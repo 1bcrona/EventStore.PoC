@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using EventStore.API.Model.Response.Dto;
 using Microsoft.AspNetCore.Authorization;
 
 namespace EventStore.API.Controllers
@@ -46,7 +47,7 @@ namespace EventStore.API.Controllers
         public async Task<IActionResult> Get([FromRoute] ProductDetailQuery query)
         {
             var result = await _mediator.Send(query);
-            return Ok(new BaseHttpServiceResponse<Product>() { Data = result });
+            return Ok(new BaseHttpServiceResponse<ProductDto>() { Data = result });
         }
 
         [HttpPost]
@@ -54,7 +55,7 @@ namespace EventStore.API.Controllers
         public async Task<IActionResult> Post([FromBody] AddProductCommand command)
         {
             var result = await _mediator.Send(command);
-            return Created(String.Empty, new BaseHttpServiceResponse<Product>() { Data = result });
+            return Created(String.Empty, new BaseHttpServiceResponse<ProductDto>() { Data = result });
         }
 
         #endregion Public Methods

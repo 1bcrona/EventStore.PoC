@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using EventStore.Store.EventStore.Infrastructure;
+﻿using EventStore.Store.EventStore.Infrastructure;
 using EventStore.StreamListener.Projection.Marten;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EventStore.StreamListener
 {
@@ -20,17 +20,20 @@ namespace EventStore.StreamListener
         public ProjectionRunner(IEventStore eventStore)
         {
             _EventStore = eventStore;
+
+            _EventStore.AddProjection(new CustomerProjection());
+            _EventStore.AddProjection(new ProductProjection());
+            _EventStore.AddProjection(new OrderProjection());
+            _EventStore.StartProjectionDaemon();
         }
 
         #endregion Public Constructors
-
 
         #region Public Methods
 
         public override async Task StartAsync(CancellationToken cancellationToken)
         {
             Console.WriteLine("Service Started");
-            RunProjections();
             await base.StartAsync(cancellationToken);
         }
 
@@ -60,18 +63,5 @@ namespace EventStore.StreamListener
         }
 
         #endregion Protected Methods
-
-        #region Private Methods
-
-        private async void RunProjections()
-        {
-            await _EventStore.AddProjection(new CustomerProjection());
-            await _EventStore.AddProjection(new ProductProjection());
-            await _EventStore.AddProjection(new OrderProjection());
-            await _EventStore.StartProjectionDaemon();
-
-        }
-
-        #endregion Private Methods
     }
 }

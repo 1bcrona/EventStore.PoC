@@ -11,9 +11,9 @@ namespace EventStore.StreamListener.Projection.Marten
 
         public ProductProjection()
         {
-            ProjectEvent<OrderCreated>(@event => @event.Data.OrderProductId, (product, e) =>
+            ProjectEvent<ProductStockUpdated>(@event => @event.EntityId, (product, e) =>
             {
-                product.Stock -= e.Data.Quantity;
+                product.Stock += e.Data;
             });
 
             ProjectEvent<ProductCreated>(@event => @event.EntityId, (product, e) =>
