@@ -18,6 +18,7 @@ COPY ["EventStore.API/EventStore.API.csproj","EventStore.API/" ]
 COPY ["EventStore.Domain/EventStore.Domain.csproj","EventStore.Domain/" ]
 COPY ["EventStore.Store/EventStore.Store.csproj","EventStore.Store/" ]
 COPY ["EventStore.StreamListener/EventStore.StreamListener.csproj","EventStore.StreamListener/" ]
+COPY ["EventStore.API.Test.Integration/EventStore.API.Test.Integration.csproj","EventStore.API.Test.Integration/" ]
 
 RUN dotnet restore
 

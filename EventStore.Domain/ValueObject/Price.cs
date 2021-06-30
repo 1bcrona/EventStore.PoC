@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EventStore.Domain.ValueObject
+﻿namespace EventStore.Domain.ValueObject
 {
     public class Price
     {
@@ -10,6 +8,5 @@ namespace EventStore.Domain.ValueObject
         public decimal Value { get; set; }
 
         #endregion Public Properties
-
     }
 }

@@ -1,5 +1,14 @@
 ﻿namespace EventStore.Domain.Entity.Infrastructure
 {
+    public interface IEntity
+    {
+        #region Public Properties
+
+        public bool Active { get; }
+
+        #endregion Public Properties
+    }
+
     public abstract class BaseEntity<T> : IEntity
     {
         #region Public Properties
@@ -8,10 +17,5 @@
         public T Id { get; set; }
 
         #endregion Public Properties
-    }
-
-    public interface IEntity
-    {
-        public bool Active { get; }
     }
 }

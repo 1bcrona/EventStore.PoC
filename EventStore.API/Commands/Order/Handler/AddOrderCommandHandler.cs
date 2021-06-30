@@ -1,4 +1,4 @@
-﻿using System;
+﻿using EventStore.API.Aggregate;
 using EventStore.API.Model;
 using EventStore.API.Model.Validation;
 using EventStore.Domain.Event.Impl;
@@ -9,7 +9,6 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using EventStore.API.Aggregate;
 
 namespace EventStore.API.Commands.Order.Handler
 {

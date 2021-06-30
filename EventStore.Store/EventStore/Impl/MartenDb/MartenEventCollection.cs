@@ -1,4 +1,5 @@
-﻿using EventStore.Store.EventStore.Infrastructure;
+﻿using EventStore.Domain.Entity.Infrastructure;
+using EventStore.Store.EventStore.Infrastructure;
 using Marten;
 using Marten.Events;
 using System;
@@ -6,7 +7,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using EventStore.Domain.Entity.Infrastructure;
 using IEvent = EventStore.Domain.Event.Infrastructure.IEvent;
 
 namespace EventStore.Store.EventStore.Impl.MartenDb
@@ -63,6 +63,15 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             return await AddEventsInternal(guidOrStringType, @event);
         }
 
+        public async Task<T> AggregateStream<T>(Guid streamId) where T : class
+        {
+            using var session = this._DocumentStore.DirtyTrackedSession(IsolationLevel.Serializable);
+
+            var item = await session.Events.AggregateStreamAsync<T>(streamId);
+
+            return item;
+        }
+
         public async Task<IEnumerable<T>> Query<T>() where T : IEntity
         {
             return await QueryInternal<T>();
@@ -83,16 +92,6 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
         public async Task<IEvent> ReadStream(Guid streamId)
         {
             return await ReadStreamInternal(streamId);
-        }
-
-        public async Task<T> AggregateStream<T>(Guid streamId) where T : class
-        {
-            using var session = this._DocumentStore.DirtyTrackedSession(IsolationLevel.Serializable);
-
-            var item =await session.Events.AggregateStreamAsync<T>(streamId);
-
-            return item;
-
         }
 
         public async Task<IEvent> ReadStream(string streamId)

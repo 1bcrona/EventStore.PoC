@@ -4,7 +4,6 @@ using EventStore.API.Commands.Product;
 using EventStore.API.Model.Response;
 using EventStore.API.Model.Response.Dto;
 using EventStore.API.Test.Integration.Comparer;
-using EventStore.Domain.Entity;
 using EventStore.Domain.ValueObject;
 using Newtonsoft.Json;
 using System;
@@ -20,19 +19,21 @@ using Xunit;
 namespace EventStore.API.Test.Integration
 {
     [TestCaseOrderer("EventStore.API.Test.Integration.TestCaseOrderer", "EventStore.API.Test.Integration")]
-    public class Test : IClassFixture<SetupFixture>
+    public class Test : IClassFixture<EnvironmentFixture>
     {
         #region Private Fields
 
-        private SetupFixture _Fixture;
+        private EnvironmentFixture _Fixture;
 
         #endregion Private Fields
 
         #region Public Constructors
 
-        public Test(SetupFixture fixture)
+        public Test(EnvironmentFixture fixture)
         {
             _Fixture = fixture;
+
+            ; //Waiting for Db and HttpClient Starts
         }
 
         #endregion Public Constructors
@@ -64,7 +65,6 @@ namespace EventStore.API.Test.Integration
                new StringContent(JsonConvert.SerializeObject(addOrderCommand), Encoding.UTF8, "application/json"));
             Assert.True(response.StatusCode == HttpStatusCode.NotFound);
 
-
             response = await _Fixture._HttpClient.PostAsync($"/Order/{Guid.NewGuid().ToString()}",
                 new StringContent(JsonConvert.SerializeObject(addOrderCommand), Encoding.UTF8, "application/json"));
             Assert.True(response.StatusCode == HttpStatusCode.BadRequest);
@@ -91,7 +91,6 @@ namespace EventStore.API.Test.Integration
         [Fact, TestPriority(1)]
         public async Task Returns_Unauthorized()
         {
-            Thread.Sleep(2000);
             var response = await _Fixture._HttpClient.GetAsync($"/Customer/CustomerId/orders");
             Assert.True(response.StatusCode == HttpStatusCode.Unauthorized);
 
@@ -233,19 +232,18 @@ namespace EventStore.API.Test.Integration
 
             order.Id = JsonConvert.DeserializeObject<BaseHttpServiceResponse<OrderDto>>(await response.Content.ReadAsStringAsync()).Data.Id;
 
-
             #region GetOrder
+
             response = await _Fixture._HttpClient.GetAsync($"/Order/{order.Id}");
             Assert.True(response.StatusCode == HttpStatusCode.OK);
             var orderGot = JsonConvert.DeserializeObject<BaseHttpServiceResponse<OrderDto>>(await response.Content.ReadAsStringAsync()).Data;
             Assert.NotNull(orderGot);
             Assert.Equal(orderGot, order, new OrderEqualityComparer());
-            #endregion
 
-
-
+            #endregion GetOrder
 
             #region Get Customer
+
             Thread.Sleep(100);
 
             response = await _Fixture._HttpClient.GetAsync($"/Customer/{customer.Id}");
@@ -258,9 +256,8 @@ namespace EventStore.API.Test.Integration
 
             #endregion Get Customer
 
-
-
             #region Get Customer Orders
+
             Thread.Sleep(2000);
 
             response = await _Fixture._HttpClient.GetAsync($"/Customer/{customer.Id}/orders");
@@ -274,6 +271,7 @@ namespace EventStore.API.Test.Integration
             Assert.NotNull(existingOrders);
             Assert.Equal(existingOrders.Product, product, new ProductEqualityComparer());
             Assert.Equal(existingOrders.Customer, customer, new CustomerEqualityComparer());
+
             #endregion Get Customer Orders
 
             #region Get Product
@@ -286,7 +284,8 @@ namespace EventStore.API.Test.Integration
 
             Assert.Equal(productGot, product, new ProductEqualityComparer());
             Assert.Equal(0, productGot.Stock);
-            #endregion
+
+            #endregion Get Product
         }
     }
 }

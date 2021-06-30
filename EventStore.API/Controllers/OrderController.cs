@@ -4,10 +4,10 @@ using EventStore.API.Model.Response.Dto;
 using EventStore.API.Queries.Order;
 using EventStore.Domain.Entity;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 
 namespace EventStore.API.Controllers
 {

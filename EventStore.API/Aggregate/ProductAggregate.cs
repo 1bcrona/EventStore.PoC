@@ -1,6 +1,6 @@
-﻿using System;
-using EventStore.API.Aggregate.Base;
+﻿using EventStore.API.Aggregate.Base;
 using EventStore.Domain.Event.Impl;
+using System;
 
 namespace EventStore.API.Aggregate
 {

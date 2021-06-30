@@ -4,15 +4,14 @@ using EventStore.API.Model.Response;
 using EventStore.API.Model.Response.Dto;
 using EventStore.API.Model.Validation;
 using EventStore.API.Queries.Customer;
-using EventStore.Domain.Entity;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 
 namespace EventStore.API.Controllers
 {

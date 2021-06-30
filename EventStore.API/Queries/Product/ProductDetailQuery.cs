@@ -1,6 +1,6 @@
-﻿using MediatR;
+﻿using EventStore.API.Model.Response.Dto;
+using MediatR;
 using System;
-using EventStore.API.Model.Response.Dto;
 
 namespace EventStore.API.Queries.Product
 {

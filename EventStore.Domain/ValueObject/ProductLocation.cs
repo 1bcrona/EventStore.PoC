@@ -21,9 +21,6 @@ namespace EventStore.Domain.ValueObject
         {
         }
 
-
-
         #endregion Public Constructors
-
     }
 }

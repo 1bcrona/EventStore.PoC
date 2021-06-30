@@ -1,13 +1,12 @@
 ﻿using EventStore.API.Commands.Product;
 using EventStore.API.Model.Response;
+using EventStore.API.Model.Response.Dto;
 using EventStore.API.Queries.Product;
-using EventStore.Domain.Entity;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using EventStore.API.Model.Response.Dto;
-using Microsoft.AspNetCore.Authorization;
 
 namespace EventStore.API.Controllers
 {

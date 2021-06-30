@@ -49,7 +49,6 @@ namespace EventStore.API.Queries.Customer.Handler
 
             foreach (var order in orders)
             {
-
                 var product = await collection.Query<Domain.Entity.Product>(order.OrderProductId);
                 var customer = await collection.Query<Domain.Entity.Customer>(order.OrderCustomerId);
                 var orderDto = new OrderDto()

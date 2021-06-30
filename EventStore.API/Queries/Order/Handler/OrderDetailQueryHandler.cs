@@ -1,4 +1,5 @@
-﻿using EventStore.API.Model;
+﻿using EventStore.API.Aggregate;
+using EventStore.API.Model;
 using EventStore.API.Model.Response.Dto;
 using EventStore.API.Model.Validation;
 using EventStore.Store.EventStore.Infrastructure;
@@ -7,7 +8,6 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using EventStore.API.Aggregate;
 
 namespace EventStore.API.Queries.Order.Handler
 {
@@ -49,7 +49,6 @@ namespace EventStore.API.Queries.Order.Handler
             }
 
             if (!order.Active) return null;
-
 
             var product = (await collection.AggregateStream<ProductAggregate>(order.OrderProductId)).Data;
             var customer = (await collection.AggregateStream<CustomerAggregate>(order.OrderCustomerId)).Data;

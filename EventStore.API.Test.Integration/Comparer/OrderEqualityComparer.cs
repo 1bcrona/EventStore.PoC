@@ -1,17 +1,14 @@
-﻿using System;
+﻿using EventStore.API.Model.Response.Dto;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EventStore.API.Model.Response.Dto;
-using EventStore.Domain.Entity;
 
 namespace EventStore.API.Test.Integration.Comparer
 {
-    public class OrderEqualityComparer : IEqualityComparer<OrderDto>
+    public class CustomerEqualityComparer : IEqualityComparer<CustomerDto>
     {
-        public bool Equals([AllowNull] OrderDto x, [AllowNull] OrderDto y)
+        #region Public Methods
+
+        public bool Equals([AllowNull] CustomerDto x, [AllowNull] CustomerDto y)
         {
             if (x == null ^ y == null)
             {
@@ -23,7 +20,35 @@ namespace EventStore.API.Test.Integration.Comparer
                 return true;
             }
 
+            return x.Id == y.Id
+                   && x.Address == y.Address
+                   && x.Name == y.Name
+                   && x.Surname == y.Surname;
+        }
 
+        public int GetHashCode([DisallowNull] CustomerDto obj)
+        {
+            return obj.GetHashCode();
+        }
+
+        #endregion Public Methods
+    }
+
+    public class OrderEqualityComparer : IEqualityComparer<OrderDto>
+    {
+        #region Public Methods
+
+        public bool Equals([AllowNull] OrderDto x, [AllowNull] OrderDto y)
+        {
+            if (x == null ^ y == null)
+            {
+                return false;
+            }
+
+            if (x == null && y == null)
+            {
+                return true;
+            }
 
             return x.Id == y.Id
                    && x.Quantity == y.Quantity
@@ -37,11 +62,14 @@ namespace EventStore.API.Test.Integration.Comparer
         {
             return obj.GetHashCode();
         }
-    }
 
+        #endregion Public Methods
+    }
 
     public class ProductEqualityComparer : IEqualityComparer<ProductDto>
     {
+        #region Public Methods
+
         public bool Equals([AllowNull] ProductDto x, [AllowNull] ProductDto y)
         {
             if (x == null ^ y == null)
@@ -54,8 +82,6 @@ namespace EventStore.API.Test.Integration.Comparer
                 return true;
             }
 
-
-
             return x.Id == y.Id
                    && x.ProductLocation.Url == y.ProductLocation.Url
                    && x.ProductMetadata.Title == y.ProductMetadata.Title
@@ -67,38 +93,7 @@ namespace EventStore.API.Test.Integration.Comparer
         {
             return obj.GetHashCode();
         }
+
+        #endregion Public Methods
     }
-
-
-    public class CustomerEqualityComparer : IEqualityComparer<CustomerDto>
-    {
-        public bool Equals([AllowNull] CustomerDto x, [AllowNull] CustomerDto y)
-        {
-            if (x == null ^ y == null)
-            {
-                return false;
-            }
-
-            if (x == null && y == null)
-            {
-                return true;
-            }
-
-
-
-            return x.Id == y.Id
-                   && x.Address == y.Address
-                   && x.Name == y.Name
-                   && x.Surname == y.Surname;
-
-        }
-
-        public int GetHashCode([DisallowNull] CustomerDto obj)
-        {
-            return obj.GetHashCode();
-        }
-    }
-
-
-
 }

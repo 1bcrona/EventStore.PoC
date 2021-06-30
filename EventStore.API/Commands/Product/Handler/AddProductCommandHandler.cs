@@ -1,15 +1,15 @@
-﻿using System;
-using EventStore.API.Model;
+﻿using EventStore.API.Model;
+using EventStore.API.Model.Response.Dto;
 using EventStore.API.Model.Validation;
 using EventStore.Domain.Event.Impl;
 using EventStore.Domain.ValueObject;
 using EventStore.Store.EventStore.Infrastructure;
 using MediatR;
+using System;
 using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using EventStore.API.Model.Response.Dto;
 
 namespace EventStore.API.Commands.Product.Handler
 {
@@ -17,8 +17,9 @@ namespace EventStore.API.Commands.Product.Handler
     {
         #region Private Fields
 
-        private readonly IEventStore _DocumentStore;
         private static Guid StreamId = Guid.Parse("7eab5d62-5c65-40fe-aea0-f0148646f593");
+        private readonly IEventStore _DocumentStore;
+
         #endregion Private Fields
 
         #region Public Constructors

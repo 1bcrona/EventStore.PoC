@@ -1,4 +1,5 @@
-﻿using EventStore.Store.EventStore.Infrastructure;
+﻿using Baseline.Dates;
+using EventStore.Store.EventStore.Infrastructure;
 using Marten;
 using Marten.Events.Projections;
 using Marten.Events.Projections.Async;
@@ -7,7 +8,6 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Baseline.Dates;
 
 namespace EventStore.Store.EventStore.Impl.MartenDb
 {
@@ -24,9 +24,10 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             _DocumentStore = Marten.DocumentStore.For(f =>
             {
                 f.Connection(connectionString);
-                f.AutoCreateSchemaObjects = AutoCreate.All;
+
                 f.DefaultTenantUsageEnabled = true;
-                f.Events.TenancyStyle = TenancyStyle.Separate;
+                f.Events.TenancyStyle = TenancyStyle.Single;
+                f.AutoCreateSchemaObjects = AutoCreate.CreateOrUpdate;
             });
         }
 

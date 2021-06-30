@@ -1,5 +1,6 @@
-﻿using System;
+﻿using EventStore.API.Aggregate;
 using EventStore.API.Model;
+using EventStore.API.Model.Response.Dto;
 using EventStore.API.Model.Validation;
 using EventStore.Store.EventStore.Infrastructure;
 using MediatR;
@@ -7,14 +8,13 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using EventStore.API.Aggregate;
-using EventStore.API.Model.Response.Dto;
 
 namespace EventStore.API.Queries.Product.Handler
 {
     public class ProductDetailQueryHandler : IRequestHandler<ProductDetailQuery, ProductDto>
     {
         #region Public Constructors
+
         public ProductDetailQueryHandler(IEventStore documentStore)
         {
             _DocumentStore = documentStore;

@@ -1,30 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Net;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using EventStore.API.Model.Response;
+﻿using EventStore.API.Model.Response;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace EventStore.API.Controllers
 {
     [Route("[controller]")]
     public class AuthController : Controller
     {
+        #region Private Fields
+
         private readonly IConfiguration _Configuration;
         private readonly IMediator _Mediator;
+
+        #endregion Private Fields
+
+        #region Public Constructors
 
         public AuthController(IConfiguration configuration, IMediator mediator)
         {
             _Configuration = configuration;
             _Mediator = mediator;
         }
+
+        #endregion Public Constructors
+
+        #region Public Methods
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -41,5 +48,7 @@ namespace EventStore.API.Controllers
             return Created(String.Empty,
                 new BaseHttpServiceResponse<string>() { Data = new JwtSecurityTokenHandler().WriteToken(token) });
         }
+
+        #endregion Public Methods
     }
 }
