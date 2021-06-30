@@ -74,13 +74,15 @@ These;
  
  ## Tests
  
- Uygulama kendi üzerinde entegrasyon testlerini barındırır.
- Bu testler **EventStore.API.Test.Integration** altında bulunur.
+The application includes integration tests on its own.
+These tests are located under **EventStore.API.Test.Integration**.
  
- Testleri koşturmak için;
- * Open the terminal at **EventStore.API.Test.Integration** directory
+To run these tests;
+ * Compile the solution.
+ * Open the terminal at **EventStore.API.Test.Integration/bin/Debug/5.0** directory
  * Execute following command
  <pre><code>dotnet test EventStore.API.Test.Integration.dll</code></pre>
+ * Or use Visual Studio's **Test Explorer** pane
  
  Before the tests run, it creates a test host by referencing from **API** and a background service host by referencing from **StreamListener**
  At the same time, a **Postgres** container is launched to be closed after the tests are finished.
