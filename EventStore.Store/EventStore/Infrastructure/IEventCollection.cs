@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EventStore.Domain.Entity.Infrastructure;
+using Remotion.Linq.Clauses;
 
 namespace EventStore.Store.EventStore.Infrastructure
 {
@@ -17,9 +19,9 @@ namespace EventStore.Store.EventStore.Infrastructure
 
         Task<bool> AddEvents(object streamId, IEvent[] @event);
 
-        Task<IEnumerable<T>> Query<T>();
+        Task<IEnumerable<T>> Query<T>() where T : IEntity;
 
-        Task<T> Query<T>(object id);
+        Task<T> Query<T>(object id) where T : IEntity;
 
         Task<IEvent> ReadStream(string streamId);
 

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EventStore.API.Controllers
 {
@@ -37,6 +38,7 @@ namespace EventStore.API.Controllers
         #region Public Methods
 
         [HttpDelete]
+        [Authorize]
         [Route("{CustomerId}")]
         public async Task<IActionResult> Delete([FromRoute] DeleteCustomerCommand command)
         {
@@ -51,6 +53,7 @@ namespace EventStore.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{CustomerId}")]
         public async Task<IActionResult> Get([FromRoute] CustomerDetailQuery query)
         {
@@ -59,6 +62,7 @@ namespace EventStore.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{CustomerId}/orders")]
         public async Task<IActionResult> Get([FromRoute] CustomerOrderDetailQuery query)
         {
@@ -67,6 +71,7 @@ namespace EventStore.API.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Post([FromBody] AddCustomerCommand command)
         {
             var result = await _mediator.Send(command);

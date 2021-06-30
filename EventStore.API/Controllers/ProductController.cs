@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EventStore.API.Controllers
 {
@@ -31,6 +32,7 @@ namespace EventStore.API.Controllers
         #region Public Methods
 
         [HttpDelete]
+        [Authorize]
         [Route("{ProductId}")]
         public async Task<IActionResult> Delete([FromRoute] DeleteProductCommand command)
         {
@@ -39,6 +41,7 @@ namespace EventStore.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{ProductId}")]
         public async Task<IActionResult> Get([FromRoute] ProductDetailQuery query)
         {
@@ -47,6 +50,7 @@ namespace EventStore.API.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Post([FromBody] AddProductCommand command)
         {
             var result = await _mediator.Send(command);

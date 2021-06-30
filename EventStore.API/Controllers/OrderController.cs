@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EventStore.API.Controllers
 {
@@ -32,6 +33,7 @@ namespace EventStore.API.Controllers
         #region Public Methods
 
         [HttpGet]
+        [Authorize]
         [Route("{OrderId}")]
         public async Task<IActionResult> Get([FromRoute] OrderDetailQuery query)
         {
@@ -40,6 +42,7 @@ namespace EventStore.API.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("{productId}")]
         public async Task<IActionResult> Post([FromRoute] Guid productId, [FromBody] AddOrderCommand command)
         {

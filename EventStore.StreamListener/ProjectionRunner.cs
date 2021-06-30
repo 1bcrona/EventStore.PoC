@@ -1,9 +1,9 @@
-﻿using EventStore.Store.EventStore.Infrastructure;
-using EventStore.StreamListener.Projection.Marten;
-using Microsoft.Extensions.Hosting;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using EventStore.Store.EventStore.Infrastructure;
+using EventStore.StreamListener.Projection.Marten;
+using Microsoft.Extensions.Hosting;
 
 namespace EventStore.StreamListener
 {
@@ -23,6 +23,7 @@ namespace EventStore.StreamListener
         }
 
         #endregion Public Constructors
+
 
         #region Public Methods
 
@@ -68,6 +69,7 @@ namespace EventStore.StreamListener
             await _EventStore.AddProjection(new ProductProjection());
             await _EventStore.AddProjection(new OrderProjection());
             await _EventStore.StartProjectionDaemon();
+
         }
 
         #endregion Private Methods

@@ -1,3 +1,4 @@
+using System;
 using EventStore.API.Model;
 using EventStore.API.Model.Response;
 using EventStore.Store.EventStore.Impl.MartenDb;
@@ -15,6 +16,10 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EventStore.API
 {
@@ -72,13 +77,15 @@ namespace EventStore.API
                             break;
                     }
 
+
                     await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
                 });
             });
             ConfigureSwagger(app);
 
             app.UseRouting();
-
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
 
@@ -88,11 +95,51 @@ namespace EventStore.API
             services.AddMediatR(Assembly.GetAssembly(GetType()));
             services.AddSingleton<IEventStore, MartenEventStore>(_ => new MartenEventStore(Configuration.GetConnectionString("default")));
 
+            var key = Encoding.ASCII.GetBytes(Configuration.GetSection("AuthenticationSecret")?.Value ?? "Very very long secret key to authenticate");
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    SaveSigninToken = true
+                };
+            });
+
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Eventstore.API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "EventStore.API", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
             });
         }
 
@@ -107,6 +154,8 @@ namespace EventStore.API
                 {
                     swaggerDoc.Servers = new List<OpenApiServer> { new() { Url = $"{basePath}" } };
                 });
+
+
             });
 
             appBuilder.UseSwaggerUI(config =>

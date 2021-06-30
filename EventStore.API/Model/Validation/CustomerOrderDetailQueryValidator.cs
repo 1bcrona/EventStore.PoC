@@ -3,11 +3,11 @@ using FluentValidation;
 
 namespace EventStore.API.Model.Validation
 {
-    public class CustomerDetailQueryValidator : AbstractValidator<CustomerDetailQuery>
+    public class CustomerOrderDetailQueryValidator : AbstractValidator<CustomerOrderDetailQuery>
     {
         #region Public Constructors
 
-        public CustomerDetailQueryValidator()
+        public CustomerOrderDetailQueryValidator()
         {
             RuleFor(command => command).NotNull();
             RuleFor(command => command.CustomerId).NotNull().NotEmpty();

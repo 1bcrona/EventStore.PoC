@@ -21,7 +21,7 @@ namespace EventStore.StreamListener
 
         public async Task Run()
         {
-            var environment = Environment.GetEnvironmentVariable("Cosimo_Environment") ?? "Production";
+            var environment = Environment.GetEnvironmentVariable("EventStore_Environment") ?? "Production";
             var host = new HostBuilder()
                 .ConfigureLogging(builder =>
                 {

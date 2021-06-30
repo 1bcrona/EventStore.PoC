@@ -4,7 +4,7 @@ using System;
 
 namespace EventStore.Domain.Entity
 {
-    public class Product : BaseEntity<Guid>, IAggregateRoot
+    public class Product : BaseEntity<Guid>
     {
         #region Public Constructors
 

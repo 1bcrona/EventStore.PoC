@@ -47,6 +47,8 @@ namespace EventStore.API.Queries.Order.Handler
                 throw new ApiException("ORDER_NOT_FOUND", "Order can not be found", HttpStatusCode.InternalServerError);
             }
 
+            if (!order.Active) return null;
+
             var product = await collection.Query<Domain.Entity.Product>(order.OrderProductId);
             var customer = await collection.Query<Domain.Entity.Customer>(order.OrderCustomerId);
 

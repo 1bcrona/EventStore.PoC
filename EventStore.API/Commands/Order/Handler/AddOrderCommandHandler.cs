@@ -1,4 +1,5 @@
-﻿using EventStore.API.Model;
+﻿using System;
+using EventStore.API.Model;
 using EventStore.API.Model.Validation;
 using EventStore.Domain.Event.Impl;
 using EventStore.Domain.ValueObject;

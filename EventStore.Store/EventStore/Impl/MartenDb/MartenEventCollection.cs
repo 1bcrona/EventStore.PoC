@@ -3,11 +3,12 @@ using Marten;
 using Marten.Events;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using EventStore.Domain.Entity.Infrastructure;
 using IEvent = EventStore.Domain.Event.Infrastructure.IEvent;
 
-// ReSharper disable ConvertToUsingDeclaration
 namespace EventStore.Store.EventStore.Impl.MartenDb
 {
     public class MartenEventCollection : IEventCollection
@@ -62,30 +63,21 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             return await AddEventsInternal(guidOrStringType, @event);
         }
 
-        public async Task<IEnumerable<T>> Query<T>()
+        public async Task<IEnumerable<T>> Query<T>() where T : IEntity
         {
             return await QueryInternal<T>();
         }
 
-        public async Task<T> Query<T>(object id)
+        public async Task<T> Query<T>(object id) where T : IEntity
         {
-            switch (id)
+            return id switch
             {
-                case int:
-                    return await QueryInternal<T>(Convert.ToInt32(id));
-
-                case long:
-                    return await QueryInternal<T>(Convert.ToInt64(id));
-
-                case string:
-                    return await QueryInternal<T>(id.ToString());
-
-                case Guid:
-                    return await QueryInternal<T>(Guid.Parse(id.ToString() ?? string.Empty));
-
-                default:
-                    throw new Exception("NOT_A_VALID_ID");
-            }
+                int => await QueryInternal<T>(Convert.ToInt32(id)),
+                long => await QueryInternal<T>(Convert.ToInt64(id)),
+                string => await QueryInternal<T>(id.ToString()),
+                Guid => await QueryInternal<T>(Guid.Parse(id.ToString() ?? string.Empty)),
+                _ => throw new Exception("NOT_A_VALID_ID")
+            };
         }
 
         public async Task<IEvent> ReadStream(Guid streamId)
@@ -98,56 +90,52 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
             return await ReadStreamInternal(streamId);
         }
 
-        private async Task<T> QueryInternal<T>(Guid id)
+        private async Task<T> QueryInternal<T>(Guid id) where T : IEntity
         {
-            using (var session = _DocumentStore.LightweightSession())
-            {
-                return await session.LoadAsync<T>(id);
-            }
+            using var session = _DocumentStore.DirtyTrackedSession(IsolationLevel.Serializable);
+            var item = await session.LoadAsync<T>(id);
+            if (item == null) return default;
+            return !item.Active ? default : item;
         }
 
-        private async Task<T> QueryInternal<T>(string id)
+        private async Task<T> QueryInternal<T>(string id) where T : IEntity
         {
-            using (var session = _DocumentStore.LightweightSession())
-            {
-                return await session.LoadAsync<T>(id);
-            }
+            using var session = _DocumentStore.DirtyTrackedSession(IsolationLevel.Serializable);
+            var item = await session.LoadAsync<T>(id);
+            if (item == null) return default;
+            return !item.Active ? default : item;
         }
 
-        private async Task<T> QueryInternal<T>(int id)
+        private async Task<T> QueryInternal<T>(int id) where T : IEntity
         {
-            using (var session = _DocumentStore.LightweightSession())
-            {
-                return await session.LoadAsync<T>(id);
-            }
+            using var session = _DocumentStore.DirtyTrackedSession(IsolationLevel.Serializable);
+            var item = await session.LoadAsync<T>(id);
+            if (item == null) return default;
+            return !item.Active ? default : item;
         }
 
-        private async Task<T> QueryInternal<T>(long id)
+        private async Task<T> QueryInternal<T>(long id) where T : IEntity
         {
-            using (var session = _DocumentStore.LightweightSession())
-            {
-                return await session.LoadAsync<T>(id);
-            }
+            using var session = _DocumentStore.LightweightSession();
+            var item = await session.LoadAsync<T>(id);
+            if (item == null) return default;
+            return !item.Active ? default : item; ;
         }
 
-        private async Task<IEnumerable<T>> QueryInternal<T>()
+        private async Task<IEnumerable<T>> QueryInternal<T>() where T : IEntity
         {
-            using (var session = _DocumentStore.LightweightSession())
-            {
-                return await session.Query<T>().ToListAsync();
-            }
+            using var session = _DocumentStore.DirtyTrackedSession(IsolationLevel.Serializable);
+            return await session.Query<T>().Where(w => w.Active).ToListAsync();
         }
 
         private async Task<IEvent> ReadStreamInternal(GuidOrStringType streamId)
         {
-            using (var session = _DocumentStore.LightweightSession())
-            {
-                streamId ??= Guid.NewGuid();
+            using var session = _DocumentStore.DirtyTrackedSession(IsolationLevel.Serializable);
+            streamId ??= Guid.NewGuid();
 
-                if (_DocumentStore.Events.StreamIdentity == StreamIdentity.AsGuid)
-                    return await session.Events.AggregateStreamAsync<IEvent>((Guid)streamId);
-                return await session.Events.AggregateStreamAsync<IEvent>((string)streamId);
-            }
+            if (_DocumentStore.Events.StreamIdentity == StreamIdentity.AsGuid)
+                return await session.Events.AggregateStreamAsync<IEvent>((Guid)streamId);
+            return await session.Events.AggregateStreamAsync<IEvent>((string)streamId);
         }
 
         #endregion Public Methods
@@ -156,33 +144,29 @@ namespace EventStore.Store.EventStore.Impl.MartenDb
 
         private async Task<bool> AddEventInternal(GuidOrStringType streamId, IEvent @event)
         {
-            using (var session = _DocumentStore.LightweightSession())
-            {
-                streamId ??= Guid.NewGuid();
+            using var session = _DocumentStore.DirtyTrackedSession(IsolationLevel.Serializable);
+            streamId ??= Guid.NewGuid();
 
-                if (_DocumentStore.Events.StreamIdentity == StreamIdentity.AsGuid)
-                    session.Events.Append((Guid)streamId, @event);
-                else
-                    session.Events.Append((string)streamId, @event);
-                await session.SaveChangesAsync();
-            }
+            if (_DocumentStore.Events.StreamIdentity == StreamIdentity.AsGuid)
+                session.Events.Append((Guid)streamId, @event);
+            else
+                session.Events.Append((string)streamId, @event);
+            await session.SaveChangesAsync();
 
             return true;
         }
 
         private async Task<bool> AddEventsInternal(GuidOrStringType streamId, IEvent[] events)
         {
-            using (var session = _DocumentStore.LightweightSession())
-            {
-                streamId ??= Guid.NewGuid();
+            using var session = _DocumentStore.DirtyTrackedSession(IsolationLevel.Serializable);
+            streamId ??= Guid.NewGuid();
 
-                if (_DocumentStore.Events.StreamIdentity == StreamIdentity.AsGuid)
-                    session.Events.Append((Guid)streamId, events?.Cast<object>());
-                else
-                    session.Events.Append((string)streamId, events?.Cast<object>());
+            if (_DocumentStore.Events.StreamIdentity == StreamIdentity.AsGuid)
+                session.Events.Append((Guid)streamId, events?.Cast<object>());
+            else
+                session.Events.Append((string)streamId, events?.Cast<object>());
 
-                await session.SaveChangesAsync();
-            }
+            await session.SaveChangesAsync();
 
             return true;
         }

@@ -41,6 +41,8 @@ namespace EventStore.API.Queries.Customer.Handler
 
             var content = await collection.Query<Domain.Entity.Customer>(request.CustomerId);
 
+            if (!content.Active) return null; 
+
             return content;
         }
 

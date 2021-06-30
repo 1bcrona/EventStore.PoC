@@ -43,15 +43,16 @@ namespace EventStore.API.Queries.Customer.Handler
 
             var orders = await collection.Query<Domain.Entity.Order>();
 
-            orders = orders.Where(w => w.OrderCustomerId == request.CustomerId);
+            orders = orders.Where(w => w.OrderCustomerId == request.CustomerId && w.Active);
 
             var orderDtos = new List<OrderDto>();
 
             foreach (var order in orders)
             {
+
                 var product = await collection.Query<Domain.Entity.Product>(order.OrderProductId);
                 var customer = await collection.Query<Domain.Entity.Customer>(order.OrderCustomerId);
-                var orderDto = new OrderDto() { Amount = order.TotalPrice, Quantity = order.Quantity, Product = product, Customer = customer };
+                var orderDto = new OrderDto() { OrderId = order.Id, Amount = order.TotalPrice, Quantity = order.Quantity, Product = product, Customer = customer };
                 orderDtos.Add(orderDto);
             }
 

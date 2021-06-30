@@ -1,4 +1,6 @@
-﻿namespace EventStore.Domain.ValueObject
+﻿using System;
+
+namespace EventStore.Domain.ValueObject
 {
     public class ProductMetadata
     {
@@ -16,5 +18,7 @@
         public string Title { get; set; }
 
         #endregion Public Properties
+
+
     }
 }
