@@ -71,6 +71,15 @@ These;
  [^1]: By default, Postgres access port is set to **5432** and port forwarding is enabled.</sup>
  [^2]: By default, EventStore.API is listening  **http:5000** and port forwarding is enabled.</sup>
  
-
-
+ ## Tests
  
+ Uygulama kendi üzerinde entegrasyon testlerini barındırır.
+ Bu testler **EventStore.API.Test.Integration** altında bulunur.
+ 
+ Testleri koşturmak için;
+ * Open the terminal at **EventStore.API.Test.Integration** directory
+ * Execute following command
+ <pre><code>dotnet test EventStore.API.Test.Integration.dll</code></pre>
+ 
+ Before the tests run, it creates a test host by referencing from **API** and a background service host by referencing from **StreamListener**
+ At the same time, a **Postgres** container is launched to be closed after the tests are finished.
