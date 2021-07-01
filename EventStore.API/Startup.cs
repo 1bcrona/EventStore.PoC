@@ -51,17 +51,15 @@ namespace EventStore.API
                 {
                     var response = new BaseHttpServiceResponse<object>();
                     var exception = context.Features.Get<IExceptionHandlerPathFeature>().Error;
-
+                    context.Response.ContentType = "application/json";
                     switch (exception)
                     {
                         case ApiException ex:
-                            context.Response.ContentType = "application/json";
                             response.Error = new ErrorModel
                             {
                                 ErrorMessage = ex.ErrorMessage,
                                 ErrorCode = ex.ErrorCode
                             };
-
                             context.Response.StatusCode = (int)ex.StatusCode;
                             break;
 
