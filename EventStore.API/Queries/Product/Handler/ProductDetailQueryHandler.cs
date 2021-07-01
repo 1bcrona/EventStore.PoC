@@ -43,8 +43,7 @@ namespace EventStore.API.Queries.Product.Handler
 
             var product = (await collection.AggregateStream<ProductAggregate>(request.ProductId)).Data;
 
-            if (product == null) return null;
-            return !product.Active ? null : product;
+            return product;
         }
 
         #endregion Public Methods

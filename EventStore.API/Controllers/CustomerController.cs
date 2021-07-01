@@ -17,6 +17,8 @@ namespace EventStore.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [ProducesResponseType(typeof(BaseHttpServiceResponse<object>), (int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(typeof(BaseHttpServiceResponse<object>), (int)HttpStatusCode.InternalServerError)]
     public class CustomerController : ControllerBase
     {
         #region Private Fields
@@ -39,42 +41,45 @@ namespace EventStore.API.Controllers
         [HttpDelete]
         [Authorize]
         [Route("{CustomerId}")]
+        [ProducesResponseType(typeof(BaseHttpServiceResponse<bool>), (int)HttpStatusCode.Accepted)]
         public async Task<IActionResult> Delete([FromRoute] DeleteCustomerCommand command)
         {
-            var validationResult = await new DeleteCustomerValidator().ValidateAsync(command);
-            if (!validationResult.IsValid)
-            {
-                var message = string.Join(',', validationResult.Errors.Select(x => x.ErrorMessage).ToList());
-                throw new ApiException("MODEL_IS_NOT_VALID", message, HttpStatusCode.BadRequest);
-            }
             var result = await _mediator.Send(command);
-            return Ok(new BaseHttpServiceResponse<bool>() { Data = result });
+            return Accepted(new BaseHttpServiceResponse<bool> { Data = result });
         }
 
         [HttpGet]
         [Authorize]
         [Route("{CustomerId}")]
+        [ProducesResponseType(typeof(BaseHttpServiceResponse<CustomerDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> Get([FromRoute] CustomerDetailQuery query)
         {
             var result = await _mediator.Send(query);
-            return Ok(new BaseHttpServiceResponse<CustomerDto>() { Data = result });
+
+            if (result == null) return NotFound();
+            return Ok(new BaseHttpServiceResponse<CustomerDto> { Data = result });
         }
 
         [HttpGet]
         [Authorize]
         [Route("{CustomerId}/orders")]
+        [ProducesResponseType(typeof(BaseHttpServiceResponse<List<OrderDto>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> Get([FromRoute] CustomerOrderDetailQuery query)
         {
             var result = await _mediator.Send(query);
-            return Ok(new BaseHttpServiceResponse<List<OrderDto>>() { Data = result });
+            if (result == null) return NotFound();
+            return Ok(new BaseHttpServiceResponse<List<OrderDto>> { Data = result });
         }
 
         [HttpPost]
         [Authorize]
+        [ProducesResponseType(typeof(BaseHttpServiceResponse<CustomerDto>), (int)HttpStatusCode.Created)]
         public async Task<IActionResult> Post([FromBody] AddCustomerCommand command)
         {
             var result = await _mediator.Send(command);
-            return Created(String.Empty, new BaseHttpServiceResponse<CustomerDto>() { Data = result });
+            return Created(String.Empty, new BaseHttpServiceResponse<CustomerDto> { Data = result });
         }
 
         #endregion Public Methods

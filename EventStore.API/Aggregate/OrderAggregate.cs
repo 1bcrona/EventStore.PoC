@@ -10,7 +10,7 @@ namespace EventStore.API.Aggregate
 
         public void Apply(OrderCreated e)
         {
-            var order = new Domain.Entity.Order()
+            var order = new Domain.Entity.Order
             {
                 Id = e.EntityId,
                 TotalPrice = e.Data.TotalPrice,

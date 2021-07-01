@@ -1,10 +1,15 @@
 ﻿using EventStore.Domain.Entity;
 using EventStore.Domain.ValueObject;
 using System;
+using System.ComponentModel.Design;
 
 namespace EventStore.API.Model.Response.Dto
 {
-    public class ProductDto
+    public abstract class BaseDto
+    {
+        public abstract bool Active { get; set; }
+    }
+    public class ProductDto : BaseDto
     {
         #region Public Properties
 
@@ -20,9 +25,19 @@ namespace EventStore.API.Model.Response.Dto
 
         public static implicit operator ProductDto(Product product)
         {
-            return new() { Id = product.Id == Guid.Empty ? null : product.Id.ToString(), Price = product.Price, ProductLocation = product.ProductLocation, ProductMetadata = product.ProductMetadata, Stock = product.Stock };
+            return product == null ? null : new ProductDto
+            {
+                Id = product.Id == Guid.Empty ? null : product.Id.ToString(),
+                Price = product.Price,
+                ProductLocation = product.ProductLocation,
+                ProductMetadata = product.ProductMetadata,
+                Stock = product.Stock,
+                Active = product.Active
+            };
         }
 
         #endregion Public Methods
+
+        public override bool Active { get; set; }
     }
 }

@@ -43,8 +43,7 @@ namespace EventStore.API.Queries.Customer.Handler
 
             var customer = (await collection.AggregateStream<CustomerAggregate>(request.CustomerId)).Data;
 
-            if (customer == null) return null;
-            return !customer.Active ? null : customer;
+            return customer;
         }
 
         #endregion Public Methods

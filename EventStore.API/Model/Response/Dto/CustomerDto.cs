@@ -3,7 +3,7 @@ using System;
 
 namespace EventStore.API.Model.Response.Dto
 {
-    public class CustomerDto
+    public class CustomerDto : BaseDto
     {
         #region Public Properties
 
@@ -18,9 +18,18 @@ namespace EventStore.API.Model.Response.Dto
 
         public static implicit operator CustomerDto(Customer customer)
         {
-            return new() { Id = customer.Id == Guid.Empty ? null : customer.Id.ToString(), Address = customer.Address, Surname = customer.Surname, Name = customer.Name };
+            return customer == null ? null : new CustomerDto
+            {
+                Id = customer.Id == Guid.Empty ? null : customer.Id.ToString(),
+                Address = customer.Address,
+                Surname = customer.Surname,
+                Name = customer.Name,
+                Active = customer.Active
+            };
         }
 
         #endregion Public Methods
+
+        public override bool Active { get; set; }
     }
 }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using EventStore.API.Aggregate;
 
 namespace EventStore.API.Queries.Customer.Handler
 {
@@ -41,6 +42,14 @@ namespace EventStore.API.Queries.Customer.Handler
 
             var collection = await _DocumentStore.GetCollection();
 
+            var customer = (await collection.AggregateStream<CustomerAggregate>(request.CustomerId)).Data;
+
+
+            if (customer == null)
+            {
+                return null;
+            }
+
             var orders = await collection.Query<Domain.Entity.Order>();
 
             orders = orders.Where(w => w.OrderCustomerId == request.CustomerId && w.Active);
@@ -49,15 +58,16 @@ namespace EventStore.API.Queries.Customer.Handler
 
             foreach (var order in orders)
             {
-                var product = await collection.Query<Domain.Entity.Product>(order.OrderProductId);
-                var customer = await collection.Query<Domain.Entity.Customer>(order.OrderCustomerId);
-                var orderDto = new OrderDto()
+                var product = (await collection.AggregateStream<ProductAggregate>(order.OrderProductId)).Data;
+
+                var orderDto = new OrderDto
                 {
                     Id = order.Id.ToString(),
                     TotalPrice = order.TotalPrice,
                     Quantity = order.Quantity,
                     Product = product,
-                    Customer = customer
+                    Customer = customer,
+                    Active = order.Active
                 };
                 orderDtos.Add(orderDto);
             }

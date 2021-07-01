@@ -10,7 +10,7 @@ namespace EventStore.API.Aggregate
 
         public void Apply(CustomerCreated e)
         {
-            var customer = new Domain.Entity.Customer()
+            var customer = new Domain.Entity.Customer
             {
                 Id = e.EntityId,
                 Name = e.Data?.Name,

@@ -2,7 +2,7 @@
 
 namespace EventStore.API.Model.Response.Dto
 {
-    public class OrderDto
+    public class OrderDto : BaseDto
     {
         #region Public Properties
 
@@ -13,5 +13,7 @@ namespace EventStore.API.Model.Response.Dto
         public Price TotalPrice { get; set; }
 
         #endregion Public Properties
+
+        public override bool Active { get; set; }
     }
 }

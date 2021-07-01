@@ -45,21 +45,22 @@ namespace EventStore.API.Queries.Order.Handler
 
             if (order == null)
             {
-                throw new ApiException("ORDER_NOT_FOUND", "Order can not be found", HttpStatusCode.InternalServerError);
+                return null;
             }
 
-            if (!order.Active) return null;
+
 
             var product = (await collection.AggregateStream<ProductAggregate>(order.OrderProductId)).Data;
             var customer = (await collection.AggregateStream<CustomerAggregate>(order.OrderCustomerId)).Data;
 
-            var orderDto = new OrderDto()
+            var orderDto = new OrderDto
             {
                 Id = order.Id.ToString(),
                 TotalPrice = order.TotalPrice,
                 Quantity = order.Quantity,
                 Product = product,
-                Customer = customer
+                Customer = customer,
+                Active = order.Active
             };
 
             return orderDto;

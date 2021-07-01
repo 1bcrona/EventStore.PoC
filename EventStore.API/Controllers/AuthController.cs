@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,6 +34,7 @@ namespace EventStore.API.Controllers
         #region Public Methods
 
         [HttpGet]
+        [ProducesResponseType(typeof(BaseHttpServiceResponse<string>), (int)HttpStatusCode.Created)]
         public async Task<IActionResult> Get()
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -44,9 +46,8 @@ namespace EventStore.API.Controllers
             };
 
             var token = tokenHandler.CreateJwtSecurityToken(tokenDescriptor);
-
-            return Created(String.Empty,
-                new BaseHttpServiceResponse<string>() { Data = new JwtSecurityTokenHandler().WriteToken(token) });
+            await Task.CompletedTask;
+            return Created(String.Empty, new BaseHttpServiceResponse<string> { Data = new JwtSecurityTokenHandler().WriteToken(token) });
         }
 
         #endregion Public Methods
