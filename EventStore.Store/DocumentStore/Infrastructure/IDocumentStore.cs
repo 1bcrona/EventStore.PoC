@@ -8,9 +8,9 @@ namespace EventStore.Store.DocumentStore.Infrastructure
     {
         #region Public Methods
 
-        public Task Connect();
+         Task Connect();
 
-        public Task<IDocumentCollection<T, TKey>> GetCollection<T, TKey>() where T : BaseEntity<TKey>;
+         Task<IDocumentCollection<T, TKey>> GetCollection<T, TKey>() where T : BaseEntity<TKey>;
 
         #endregion Public Methods
     }

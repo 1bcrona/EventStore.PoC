@@ -4,7 +4,7 @@
     {
         #region Public Properties
 
-        public bool Active { get; }
+         bool Active { get; }
 
         #endregion Public Properties
     }
